@@ -11,7 +11,7 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	
+
 	delete model_;
 	delete debugCamera_;
 }
@@ -27,9 +27,9 @@ void GameScene::Initialize() {
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 	//x,y,z方向のスケーリングを設定
-	worldTransform_.scale_ = { 1,5,1 };
-	worldTransform_.rotation_ = { 0.0f,0.0f,3.14f/4 };
-
+	worldTransform_.scale_ = { 5,5,5 };
+	//x,y,z軸周りの回転角を設定
+	worldTransform_.rotation_ = { 45.0f,45.0f,0.0f };
 
 	//スケーリング行列を宣言
 	Matrix4 matScale;
@@ -58,35 +58,76 @@ void GameScene::Initialize() {
 	matIdentity.m[2][2] = 1;
 	matIdentity.m[3][3] = 1;
 
+
+
+	//合成回転行列を宣言
+	Matrix4 matRot = matIdentity;
+	//各軸用回転行列を宣言
+	Matrix4 matRotX = matIdentity, matRotY = matIdentity, matRotZ = matIdentity;
 	
-	//worldTransform_.matWorld_ *= matScale;
+	matRotZ.m[0][0] = cos(worldTransform_.rotation_.z);
+	matRotZ.m[0][1] = sin(worldTransform_.rotation_.z);
+	matRotZ.m[1][0] = -sin(worldTransform_.rotation_.z);
+	matRotZ.m[1][1] = cos(worldTransform_.rotation_.z);
 
-	
+	matRotY.m[0][0] = cos(worldTransform_.rotation_.y);
+	matRotY.m[2][0] = sin(worldTransform_.rotation_.y);
+	matRotY.m[0][2] = -sin(worldTransform_.rotation_.y);
+	matRotY.m[2][2] = cos(worldTransform_.rotation_.y);
 
-	Matrix4 matRotZ = matIdentity;
-	matRotZ.m[0][0] = worldTransform_.rotation_.z;
-	matRotZ.m[0][1] = worldTransform_.rotation_.z;
-	matRotZ.m[1][0] = -worldTransform_.rotation_.z;
-	matRotZ.m[1][1] = worldTransform_.rotation_.z;
+	matRotX.m[1][1] = cos(worldTransform_.rotation_.x);
+	matRotX.m[1][2] = sin(worldTransform_.rotation_.x);
+	matRotX.m[2][1] = -sin(worldTransform_.rotation_.x);
+	matRotX.m[2][2] = cos(worldTransform_.rotation_.x);
 
+
+	//各軸の回転行列を合成
+	matRot *= matRotZ;
+	matRot *= matRotX;
+	matRot *= matRotY;
+
+
+	//worldTransform_.matWorld_ = matIdentity;
+	//worldTransform_.matWorld_ *= matRotZ;
+	////行列の転送
+	//worldTransform_.TransferMatrix();
+
+	//x,y,z軸周りの平行移動を設定
+	worldTransform_.translation_ = { 10,10,10 };
+
+	//平行移動行列を宣言
+	Matrix4 matTrans = MathUtility::Matrix4Identity();
+	/*
+	  1,0,0,0
+	  0,1,0,0
+	  0,0,1,0
+	  Tx,Ty,Tz,1
+
+	*/
+	matTrans.m[3][0] = worldTransform_.translation_.x;
+	matTrans.m[3][1] = worldTransform_.translation_.y;
+	matTrans.m[3][2] = worldTransform_.translation_.z;
+	matTrans.m[3][3] = 1;
 
 
 	worldTransform_.matWorld_ = matIdentity;
-	worldTransform_.matWorld_ *= matRotZ;
+	worldTransform_.matWorld_ *= matScale;
+	worldTransform_.matWorld_ *= matRot;
+	worldTransform_.matWorld_ *= matTrans;
+
 	//行列の転送
 	worldTransform_.TransferMatrix();
 
 	//ビュープロジェクションの初期化
 	viewProjection_.Initialize();
 	//デバッグカメラの生成
-	debugCamera_ = new DebugCamera(10, 10);
+	debugCamera_ = new DebugCamera(1080, 720);
 	//軸方向表示を有効にする
 	AxisIndicator::GetInstance()->SetVisible(true);
 	//軸方向表示が参照するビュープロジェクションを指定する(アドレス渡し)
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&debugCamera_->GetViewProjection());
 	//ライン描画が参照するビュープロジェクションを指定する(アドレス渡し)
 	PrimitiveDrawer::GetInstance()->SetViewProjection(&debugCamera_->GetViewProjection());
-	
 
 
 }
@@ -98,7 +139,7 @@ void GameScene::Update() {
 
 void GameScene::Draw() {
 
-	
+
 
 
 
