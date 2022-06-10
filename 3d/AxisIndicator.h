@@ -66,7 +66,7 @@ class AxisIndicator {
 	// ビュープロジェクション
 	ViewProjection viewProjection_;
 	// ワールドトランスフォーム
-	WorldTransform worldTransform_;
+	WorldTransform worldTransforms_;
 	// トレースするビュープロジェクション
 	const ViewProjection* targetViewProjection_ = nullptr;
 	// 表示フラグ
