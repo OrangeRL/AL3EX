@@ -11,6 +11,8 @@
 #include "WorldTransform.h"
 #include "DebugCamera.h"
 #include"PlayerBullet.h"
+#include<memory>
+#include<list>
 
 //<summary>
 //自キャラ
@@ -40,6 +42,7 @@ public:
 	void TransferMatrix();
 
 	void Attack();
+	
 
 private:
 	//ワールド変換データ
@@ -52,5 +55,5 @@ private:
 	uint32_t textureHandle_ = 0u;
 	Player* player_ = nullptr;
 	//弾
-	PlayerBullet* bullet_ = nullptr;
+	std::list<std::unique_ptr<PlayerBullet>> bullets_;
 };
