@@ -1,12 +1,13 @@
 #include"PlayerBullet.h"
 
+
 PlayerBullet::PlayerBullet() {
 
 }
 
 
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position) {
+void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	//NULLポインタチェック
 	assert(model);
 	model_ = model;
@@ -16,6 +17,8 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	worldTransform_.Initialize();
 	//引数として受け取った初期座標をセット
 	worldTransform_.translation_ =position;
+	//引数として受け取った速度をメンバ変数を代入
+	velocity_ = velocity;
 }
 void PlayerBullet::TransferMatrix() {
 	Matrix4 matIdentity;
@@ -80,10 +83,20 @@ void PlayerBullet::TransferMatrix() {
 
 
 void PlayerBullet::Update() {
+
+	
+
+	//座標を移動(1フレーム分の移動量を足しこむ)
+	worldTransform_.translation_ += velocity_;
 	//ワールドトランスフォームの更新
 	TransferMatrix();
 	//行列の転送
 	worldTransform_.TransferMatrix();
+	//時間経過でデス
+	if (--deathTimer_<=0)
+	{
+		isDead_ = true;
+	}
 }
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection)
