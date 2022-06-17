@@ -60,10 +60,8 @@ void Player::Update() {
 	Move();
 	Attack();
 
-	if (bullet_) {
-		bullet_->Update();
-	}
-
+	//弾更新
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) { bullet->Update(); }
 	TransferMatrix();
 	debugText_->SetPos(50, 50);
 	debugText_->Printf(
@@ -136,16 +134,18 @@ void Player::TransferMatrix() {
 
 void Player::Attack()
 {
-	if (input_->PushKey(DIK_SPACE)) {
-
-		// 弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
+	if (input_->TriggerKey(DIK_SPACE))
+	{
+		//自キャラの座標をコピー
+		//DirectX::XMFLOAT3 position = worldTransform_.translation_;
+		//弾を生成し、初期化
+		std::unique_ptr<PlayerBullet>newBullet = std::make_unique<PlayerBullet>();
 		newBullet->Initialize(model_, worldTransform_.translation_);
-
-		// 弾を登録する
-		bullet_ = newBullet;
+		//弾を登録する
+		bullets_.push_back(std::move(newBullet));
 	}
 }
+
 
 void Player::Draw(ViewProjection& viewProjection_)
 {
@@ -154,12 +154,10 @@ void Player::Draw(ViewProjection& viewProjection_)
 #pragma endregion
 
 #pragma region 3Dオブジェクト描画
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 
+	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
 	//弾描画
-	if (bullet_) { 
-		bullet_->Draw(viewProjection_);
-	}
+	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) { bullet->Draw(viewProjection_); }
 #pragma endregion
 
 #pragma region 前景スプライト描画
