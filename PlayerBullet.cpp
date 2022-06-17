@@ -1,80 +1,23 @@
-#include "Player.h"
+#include"PlayerBullet.h"
 
-
-Player::Player() {
+PlayerBullet::PlayerBullet() {
 
 }
 
-void Player::Initialize(Model* model, uint32_t textureHandle)
-{
+
+
+void PlayerBullet::Initialize(Model* model, const Vector3& position) {
 	//NULLポインタチェック
 	assert(model);
-
-	//引数として受け取ったデータをメンバ変数に記録する
 	model_ = model;
-	textureHandle_ = textureHandle;
-
-	//シングルトンインスタンスを取得する
-	input_ = Input::GetInstance();
-	debugText_ = DebugText::GetInstance();
-
-	//ワールド変換の初期化
+	//テクスチャ読み込み
+	textureHandle_ = TextureManager::Load("black.png");
+	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
+	//引数として受け取った初期座標をセット
+	worldTransform_.translation_ =position;
 }
-
-void Player::Move() {
-	// キャラクターの移動ベクトル
-	Vector3 move = { 0,0,0 };
-
-	// キャラクターの移動速さ
-	const float kCharacterSpeed = 0.2f;
-
-	const float kMoveLimitX = 36.0f;
-	const float kMoveLimitY = 20.0f;
-
-	//押した方向で移動ベクトルを変更
-	if (input_->PushKey(DIK_A)) {
-		move = { -kCharacterSpeed,0,0 };
-	}
-	else if (input_->PushKey(DIK_D)) {
-		move = { kCharacterSpeed,0,0 };
-	}
-	else if (input_->PushKey(DIK_W)) {
-		move = { 0,kCharacterSpeed,0 };
-	}
-	else if (input_->PushKey(DIK_S)) {
-		move = { 0,-kCharacterSpeed,0 };
-	}
-	worldTransform_.rotation_.y -= 0.02f;
-	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
-	worldTransform_.translation_.x = min(worldTransform_.translation_.x, kMoveLimitX);
-	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
-	worldTransform_.translation_.y = min(worldTransform_.translation_.y, kMoveLimitY);
-
-	//座標移動
-	worldTransform_.translation_ += move;
-	worldTransform_.TransferMatrix();
-}
-
-void Player::Update() {
-	Move();
-	TransferMatrix();
-	debugText_->SetPos(50, 50);
-	debugText_->Printf(
-		"move:(%f,%f,%f)",
-		worldTransform_.translation_.x,
-		worldTransform_.translation_.y,
-		worldTransform_.translation_.z);
-	//キャラクター攻撃処理
-	Attack();
-	//弾更新
-	if (bullet_)
-	{
-		bullet_->Update();
-	}
-}
-
-void Player::TransferMatrix() {
+void PlayerBullet::TransferMatrix() {
 	Matrix4 matIdentity;
 	matIdentity.m[0][0] = 1.0f;
 	matIdentity.m[1][1] = 1.0f;
@@ -134,20 +77,16 @@ void Player::TransferMatrix() {
 	worldTransform_.matWorld_ *= matRot;
 	worldTransform_.matWorld_ *= matTrans;
 }
-void Player::Attack()
-{
-	if (input_->PushKey(DIK_SPACE))
-	{
-		//弾を生成し、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_);
 
-		//弾を登録する
-		bullet_ = newBullet;
-	}
+
+void PlayerBullet::Update() {
+	//ワールドトランスフォームの更新
+	TransferMatrix();
+	//行列の転送
+	worldTransform_.TransferMatrix();
 }
 
-void Player::Draw(ViewProjection& viewProjection)
+void PlayerBullet::Draw(const ViewProjection& viewProjection)
 {
 #pragma region 背景スプライト描画
 
@@ -156,11 +95,6 @@ void Player::Draw(ViewProjection& viewProjection)
 #pragma region 3Dオブジェクト描画
 	//モデルの描画
 	model_->Draw(worldTransform_, viewProjection, textureHandle_);
-	//弾の描画
-	if (bullet_)
-	{
-		bullet_->Draw(viewProjection);
-	}
 #pragma endregion
 
 #pragma region 前景スプライト描画

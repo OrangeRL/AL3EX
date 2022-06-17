@@ -10,6 +10,7 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
+#include"PlayerBullet.h"
 
 //<summary>
 //自キャラ
@@ -38,6 +39,8 @@ public:
 
 	void TransferMatrix();
 
+	void Attack();
+
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -48,4 +51,6 @@ private:
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	Player* player_ = nullptr;
+	//弾
+	PlayerBullet* bullet_ = nullptr;
 };
