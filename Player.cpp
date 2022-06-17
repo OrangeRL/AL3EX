@@ -1,6 +1,18 @@
 #include "Player.h"
 
 
+Vector3 vecmat(Vector3& vec, Matrix4& mat) {
+
+	Vector3 vecMat = {};
+
+	vecMat.x = vec.x * mat.m[0][0] + vec.y * mat.m[1][0] + vec.z * mat.m[2][0];
+
+	vecMat.y = vec.x * mat.m[0][1] + vec.y * mat.m[1][1] + vec.z * mat.m[2][1];
+
+	vecMat.z = vec.x * mat.m[0][2] + vec.y * mat.m[1][2] + vec.z * mat.m[2][2];
+
+	return vecMat;
+}
 Player::Player() {
 
 }
@@ -136,11 +148,15 @@ void Player::Attack()
 {
 	if (input_->TriggerKey(DIK_SPACE))
 	{
-		//自キャラの座標をコピー
-		//DirectX::XMFLOAT3 position = worldTransform_.translation_;
+		TransferMatrix();
+		//弾の速度
+		const float kBulletSpeed=1.0f;
+		Vector3 velocity(0,0,kBulletSpeed);
+
+		velocity=vecmat(velocity, worldTransform_.matWorld_);
 		//弾を生成し、初期化
 		std::unique_ptr<PlayerBullet>newBullet = std::make_unique<PlayerBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_);
+		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
 		//弾を登録する
 		bullets_.push_back(std::move(newBullet));
 	}
