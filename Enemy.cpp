@@ -85,6 +85,7 @@ void Enemy::Move() {
 	const float moveSpeed = 0.2f;
 
 	move = { 0.0f,0.01f,-moveSpeed};
+	
 
 	worldTransform_.translation_ += move;
 TransferMatrix();
@@ -94,7 +95,29 @@ TransferMatrix();
 
 void Enemy::Update() {
 	Move();
-	
+	Vector3 approachMove = { 0,0,0 };
+	Vector3 leaveMove = { 0,0,0 };
+	float moveSpeed = 0.2f;
+	approachMove = { 0.0f,0.0f,-moveSpeed };
+	leaveMove = { -0.1,0.1,-moveSpeed };
+	switch (phase_)
+	{
+	case Enemy::Phase::Approach:
+	default:
+		//ˆÚ“®(ƒxƒNƒgƒ‹‚ð‰ÁŽZ)
+		worldTransform_.translation_ += approachMove;
+		//‹K’è‚ÌˆÊ’u‚É“ž’B‚µ‚½‚ç—£’E
+		if (worldTransform_.translation_.z<0.0f)
+		{
+			phase_ = Phase::Leave;
+		}
+		break;
+	case Enemy::Phase::Leave:
+		//ˆÚ“®(ƒxƒNƒgƒ‹‚ð‰ÁŽZ)
+		worldTransform_.translation_ += leaveMove;
+		break;
+		
+	}
 	
 }
 
