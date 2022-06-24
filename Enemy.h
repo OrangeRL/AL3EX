@@ -1,32 +1,25 @@
 #pragma once
 #include "assert.h"
 #include "Audio.h"
-#include "DirectXCommon.h"
-#include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
 #include "SafeDelete.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
-#include "DebugCamera.h"
-#include"PlayerBullet.h"
-#include<memory>
-#include<list>
-
 //<summary>
-//自キャラ
+//敵
 //</summary>
-class Player
+class Enemy
 {
 public:
 	/// <summary>
 	/// コンストクラタ
 	/// </summary>
-	Player();
+	Enemy();
 
 	///<summary>///初期化///</summary>///<paramname="model">モデル</param>///<paramname="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, uint32_t textureHandle);
+	void Initialize(Model* model, const Vector3& position,uint32_t textureHandle);
 	///<summary>
 	///更新
 	///</summary>
@@ -36,22 +29,15 @@ public:
 	///</summary>
 	void Draw(ViewProjection& viewProjection);
 
-	void Move();
-
 	void TransferMatrix();
-
-	void Attack();
-	
+	void Move();
 private:
-	//ワールド変換データ
-	WorldTransform worldTransform_;
-	//モデル
-	Model* model_ = nullptr;
-	Input* input_ = nullptr;
-	DebugText* debugText_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	Player* player_ = nullptr;
-	//弾
-	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+	//3Dモデル
+	Model* model_ = nullptr;
+	//ワールド変換データ
+	WorldTransform worldTransform_;
+	//速度
+	Vector3 velocity_;
 };

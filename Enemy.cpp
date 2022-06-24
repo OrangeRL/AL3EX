@@ -1,23 +1,23 @@
-#include"PlayerBullet.h"
+#include"Enemy.h"
 
-PlayerBullet::PlayerBullet() {
+Enemy::Enemy() {
 
 }
 
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
+void Enemy::Initialize(Model* model, const Vector3& position,uint32_t textureHandle) {
 	//NULLポインタチェック
 	assert(model);
 	model_ = model;
 	//テクスチャ読み込み
-	textureHandle_ = TextureManager::Load("black.png");
+	textureHandle_ = TextureManager::Load("monster.jpg");
 	//ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
-	//引数として受け取った初期座標をセット
-	worldTransform_.translation_ =position;
-	//引数として受け取った速度をメンバ変数を代入
-	velocity_ = velocity;
+	// 引数で受け取った初期座標をセット
+	worldTransform_.translation_ = position;
+	
 }
-void PlayerBullet::TransferMatrix() {
+
+void Enemy::TransferMatrix() {
 	Matrix4 matIdentity;
 	matIdentity.m[0][0] = 1.0f;
 	matIdentity.m[1][1] = 1.0f;
@@ -77,23 +77,29 @@ void PlayerBullet::TransferMatrix() {
 	worldTransform_.matWorld_ *= matTrans;
 }
 
+void Enemy::Move() {
 
-void PlayerBullet::Update() {
-	//座標を移動(1フレーム分の移動量を足しこむ)
-	worldTransform_.translation_ += velocity_;
-	//ワールドトランスフォームの更新
-	TransferMatrix();
-	//行列の転送
+	Vector3 move = { 0,0,0 };
+
+	// キャラクターの移動速さ
+	const float moveSpeed = 0.2f;
+
+	move = { 0.0f,0.01f,-moveSpeed};
+
+	worldTransform_.translation_ += move;
+TransferMatrix();
+//ワールドトランスフォームの更新
 	worldTransform_.TransferMatrix();
-	//時間経過でデス
-	if (--deathTimer_<=0)
-	{
-		isDead_ = true;
-	}
 }
 
-void PlayerBullet::Draw(const ViewProjection& viewProjection)
-{
+void Enemy::Update() {
+	Move();
+	
+	
+}
+
+void Enemy::Draw(ViewProjection& viewProjection) {
+
 #pragma region 背景スプライト描画
 
 #pragma endregion

@@ -13,7 +13,6 @@ Vector3 vecmat(Vector3& vec, Matrix4& mat) {
 	return vecMat;
 }
 
-
 Player::Player() {
 
 }
@@ -93,7 +92,6 @@ void Player::TransferMatrix() {
 	matIdentity.m[1][1] = 1.0f;
 	matIdentity.m[2][2] = 1.0f;
 	matIdentity.m[3][3] = 1.0f;
-
 
 	Matrix4 matScale;
 	matScale.m[0][0] = worldTransform_.scale_.x;

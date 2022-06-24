@@ -10,7 +10,8 @@
 #include "WorldTransform.h"
 #include "DebugCamera.h"
 #include "Player.h"
-
+#include"Enemy.h"
+#include<list>
 
 /// <summary>
 /// ゲームシーン
@@ -44,8 +45,6 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-
-
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -65,6 +64,8 @@ private: // メンバ変数
 	/// ゲームシーン用
 	//自キャラ
 	Player* player_ = nullptr;
+	//敵
+	Enemy* enmey_ = nullptr;
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 	//ワールドトランスフォーム
@@ -72,8 +73,7 @@ private: // メンバ変数
 	//ビュープロジェクション
 	ViewProjection viewProjection_;
 	/// </summary>
-
-	//Matrix4 GetMatrix(const WorldTransform& worldTransforms_);
+	
 public:
 	enum PartId {
 		kRoot,		// 大元

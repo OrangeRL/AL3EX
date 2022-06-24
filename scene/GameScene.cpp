@@ -5,7 +5,6 @@
 #include"AxisIndicator.h"
 #include"PrimitiveDrawer.h"
 
-
 GameScene::GameScene() {
 
 }
@@ -18,7 +17,6 @@ GameScene::~GameScene() {
 }
 
 void GameScene::Initialize() {
-
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
@@ -26,10 +24,15 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
 
+	Vector3 position = worldTransforms_->translation_;
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+	//敵の生成
+	enmey_ = new Enemy();
+	//敵の初期化
+	enmey_->Initialize(model_, position, textureHandle_);
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -43,13 +46,14 @@ void GameScene::Initialize() {
 	AxisIndicator::SetTargetViewProjection(&viewProjection_);
 }
 
-
-
 void GameScene::Update() {
 	debugCamera_->Update();
 
 	//自キャラの更新
 	player_->Update();
+	//敵の更新
+	enmey_->Update();
+
 }
 
 void GameScene::Draw() {
@@ -82,7 +86,7 @@ void GameScene::Draw() {
 	//3Dモデル描画
 	//自機の描画
 	player_->Draw(viewProjection_);
-
+	enmey_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
