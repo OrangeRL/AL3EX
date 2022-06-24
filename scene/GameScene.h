@@ -10,7 +10,8 @@
 #include "WorldTransform.h"
 #include "DebugCamera.h"
 #include "Player.h"
-
+#include "Enemy.h"
+#include <memory>
 
 /// <summary>
 /// ゲームシーン
@@ -65,6 +66,10 @@ private: // メンバ変数
 	/// ゲームシーン用
 	//自キャラ
 	Player* player_ = nullptr;
+	//std::unique_ptr<Player> player_;
+	Enemy* enemy_ = nullptr;
+	//teki
+	//std::unique_ptr<Enemy> enemy_;
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 	//ワールドトランスフォーム

@@ -14,7 +14,7 @@ GameScene::~GameScene() {
 
 	delete model_;
 	delete debugCamera_;
-	delete player_;
+	//delete player_;
 }
 
 void GameScene::Initialize() {
@@ -28,8 +28,21 @@ void GameScene::Initialize() {
 
 	//自キャラの生成
 	player_ = new Player();
-	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
+	//Player* newPlayer = new Player();
+	////自キャラの初期化
+	//newPlayer->Initialize(model_, textureHandle_);
+	//player_.reset(newPlayer);
+	//自キャラの生成
+	Vector3 position = worldTransforms_->translation_;
+	enemy_ = new Enemy();
+	enemy_->Initialize(model_,position, textureHandle_);
+	
+	//Enemy* newEnemy = new Enemy();
+	//std::unique_ptr<Enemy>newEnemy = std::make_unique<Enemy>();
+	////自キャラの初期化
+	//newEnemy->Initialize(model_, position, textureHandle_);
+	//enemy_.reset(newEnemy);
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -50,7 +63,8 @@ void GameScene::Update() {
 
 	//自キャラの更新
 	player_->Update();
-
+	//敵の更新
+	enemy_->Update();
 //#ifdef _DEBUG 
 //	if (input_->TriggerKey(DIK_O))
 //	{
@@ -105,7 +119,7 @@ void GameScene::Draw() {
 	//3Dモデル描画
 	//自機の描画
 	player_->Draw(viewProjection_);
-
+	enemy_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion

@@ -53,6 +53,7 @@ private:
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	Player* player_ = nullptr;
+	
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>>bullets_;
 };

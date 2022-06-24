@@ -1,3 +1,4 @@
+#include "assert.h"
 #include "DebugText.h"
 #include "Input.h"
 #include "Model.h"
@@ -13,7 +14,7 @@ public:
 	Enemy();
 
 	///<summary>///初期化///</summary>///<paramname="model">モデル</param>///<paramname="textureHandle">テクスチャハンドル</param>
-	void Initialize();
+	void Initialize(Model* model, const Vector3& position, uint32_t textureHandle);
 	///<summary>
 	///更新
 	///</summary>
@@ -22,7 +23,9 @@ public:
 	///描画
 	///</summary>
 	//void Draw(ViewProjection viewProjection_);
-	void Draw();
+	void Draw(ViewProjection& viewProjection);
+	void TransferMatrix();
+	void Move();
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
