@@ -29,11 +29,8 @@ void GameScene::Initialize() {
 	//自キャラの生成
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_);
-	//Player* newPlayer = new Player();
-	////自キャラの初期化
-	//newPlayer->Initialize(model_, textureHandle_);
-	//player_.reset(newPlayer);
-	//自キャラの生成
+	
+	//tekiキャラの生成
 	Vector3 position = worldTransforms_->translation_;
 	enemy_ = new Enemy();
 	enemy_->Initialize(model_,position, textureHandle_);
