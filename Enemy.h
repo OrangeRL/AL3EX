@@ -13,6 +13,12 @@
 #include "EnemyBullet.h"
 #include <memory>
 #include<list>
+#include "MathUtility.h"
+
+using namespace MathUtility;
+
+
+class Player;
 ///<summary>
 ///敵
 ///</summary>
@@ -39,8 +45,16 @@ public:
 	void Fire();
 	//接近フェーズ初期化
 	void ApproachInit();
+
 	//発射間隔
 	static const int kFireInterval = 60;
+	//自キャラ
+	Player* player_ = nullptr;
+
+	void SetPlayer(Player* player) { player_ = player; }
+
+	//ワールド座標を取得
+	Vector3 GetWorldPosition();
 
 private:
 	//ワールド変換データ

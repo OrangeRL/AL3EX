@@ -65,7 +65,7 @@ private: // メンバ変数
 	//自キャラ
 	Player* player_ = nullptr;
 	//敵
-	Enemy* enmey_ = nullptr;
+	Enemy* enemy_ = nullptr;
 	//カメラ上方向の角度
 	float viewAngle = 0.0f;
 	//ワールドトランスフォーム

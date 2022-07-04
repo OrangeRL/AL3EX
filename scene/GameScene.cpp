@@ -30,9 +30,14 @@ void GameScene::Initialize() {
 	//自キャラの初期化
 	player_->Initialize(model_, textureHandle_);
 	//敵の生成
-	enmey_ = new Enemy();
+	enemy_ = new Enemy();
+	//敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
 	//敵の初期化
-	enmey_->Initialize(model_, position, textureHandle_);
+	enemy_->Initialize(model_, position, textureHandle_);
+
+	
+
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -52,7 +57,7 @@ void GameScene::Update() {
 	//自キャラの更新
 	player_->Update();
 	//敵の更新
-	enmey_->Update();
+	enemy_->Update();
 
 }
 
@@ -86,7 +91,7 @@ void GameScene::Draw() {
 	//3Dモデル描画
 	//自機の描画
 	player_->Draw(viewProjection_);
-	enmey_->Draw(viewProjection_);
+	enemy_->Draw(viewProjection_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
