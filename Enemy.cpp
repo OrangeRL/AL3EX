@@ -101,20 +101,33 @@ void Enemy::TransferMatrix() {
 
 }
 
-
+void Enemy::OnCollision()
+{
+}
+Vector3 Enemy::GetWorldPosition()
+{
+	TransferMatrix();
+	//ワールド座標を入れる変数
+	Vector3 worldPos;//ワールド行列の平行移動成分を取得（ワールド座標）
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
+}
 
 void Enemy::Fire()
 {
 
 	TransferMatrix();
-	
+
 	assert(player_);
 	//弾の速度
 	const float kBulletSpeed = 1.0f;
 	// 自キャラのワールド座標を取得する
-	 Vector3 playerPos =player_->GetWorldPosition();
-	 // 敵キャラのワールド座標を取得する
-	Vector3 enemyPos =GetWorldPosition();
+	Vector3 playerPos = player_->GetWorldPosition();
+	// 敵キャラのワールド座標を取得する
+	Vector3 enemyPos = GetWorldPosition();
 	// 差分ベクトル
 	Vector3 velocity = playerPos - enemyPos;
 	// 正規化
@@ -127,11 +140,9 @@ void Enemy::Fire()
 	bullets_.push_back(std::move(newBullet));
 
 }
-
 void Enemy::ApproachInit()
 {
 
-	//発射タイマーを初期化
 
 	// 発射タイマーカウントダウン
 	fireTimer--;
@@ -149,6 +160,7 @@ void Enemy::ApproachInit()
 }
 
 
+
 void Enemy::Move()
 {
 	//キャラクターの移動ベクトル
@@ -164,6 +176,7 @@ void Enemy::Move()
 	worldTransform_.TransferMatrix();
 }
 
+
 void Enemy::Update() {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
@@ -173,7 +186,7 @@ void Enemy::Update() {
 	//キャラクターの移動ベクトル
 	Vector3 approachMove = { 0,0,0 };
 	Vector3 leaveMove = { 0,0,0 };
-	float moveSpeed = 0.1f;
+	float moveSpeed = 0.01f;
 	approachMove = { 0.0f,0.0f,-moveSpeed };
 	leaveMove = { -0.1,0.1,-moveSpeed };
 
@@ -206,17 +219,6 @@ void Enemy::Update() {
 		worldTransform_.translation_.y,
 		worldTransform_.translation_.z);
 
-
-}
-
-Vector3 Enemy::GetWorldPosition() {
-	//ワールド座標を入れる変数
-	Vector3 worldPos;
-	//ワールド行列の平行移動成分を取得(ワールド座標)
-	worldPos.x = worldTransform_.matWorld_.m[3][0];
-	worldPos.y = worldTransform_.matWorld_.m[3][1];
-	worldPos.z = worldTransform_.matWorld_.m[3][2];
-	return worldPos;
 }
 
 void Enemy::Draw(ViewProjection& viewProjection)

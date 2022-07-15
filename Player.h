@@ -1,5 +1,5 @@
 #pragma once
-#include "assert.h"
+
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "DebugText.h"
@@ -10,11 +10,9 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include "DebugCamera.h"
-#include"PlayerBullet.h"
-#include<memory>
+#include "PlayerBullet.h"
+#include <memory>
 #include<list>
-
-
 
 //<summary>
 //自キャラ
@@ -22,10 +20,10 @@
 class Player
 {
 public:
+
 	/// <summary>
 	/// コンストクラタ
 	/// </summary>
-	Player();
 
 	///<summary>///初期化///</summary>///<paramname="model">モデル</param>///<paramname="textureHandle">テクスチャハンドル</param>
 	void Initialize(Model* model, uint32_t textureHandle);
@@ -36,6 +34,7 @@ public:
 	///<summary>
 	///描画
 	///</summary>
+	//void Draw(ViewProjection viewProjection_);
 	void Draw(ViewProjection& viewProjection);
 
 	void Move();
@@ -44,19 +43,28 @@ public:
 
 	void Attack();
 
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
-	
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 private:
-	//ワールド変換データ
+
 	WorldTransform worldTransform_;
-	//モデル
+	// モデル
 	Model* model_ = nullptr;
-	Input* input_ = nullptr;
-	DebugText* debugText_ = nullptr;
-	//テクスチャハンドル
+	// テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
-	Player* player_ = nullptr;
+	// 入力処理
+	Input* input_ = nullptr;
+	// デバックテキスト
+	DebugText* debugText_ = nullptr;
+
 	//弾
-	std::list<std::unique_ptr<PlayerBullet>> bullets_;
+	std::list<std::unique_ptr<PlayerBullet>>bullets_;
+
+
 };
