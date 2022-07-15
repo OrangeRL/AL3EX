@@ -55,8 +55,14 @@ public:
 	// セッター
 	void SetPlayer(Player* player) { player_ = player; }
 
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -83,4 +89,5 @@ private:
 
 	//自キャラ
 	Player* player_ = nullptr;
+
 };

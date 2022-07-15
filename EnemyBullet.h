@@ -2,6 +2,7 @@
 #include "assert.h"
 #include "Model.h"
 #include "WorldTransform.h"
+#include "Input.h"
 
 ///<summary>
 ///敵の弾
@@ -33,11 +34,17 @@ public:
 	///</summary>
 	///<paramname="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+	Vector3 GetWorldPosition();
+
 	void TransferMatrix();
+	
 	bool IsDead() const { return isDead_; }
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
+	Input* input_ = nullptr;
 	//モデル
 	Model* model_ = nullptr;
 	//テクスチャハンドル

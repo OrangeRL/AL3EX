@@ -34,7 +34,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, uint32_t textureHa
 	worldTransform_.Initialize();
 	//引数で受け取った初期座標をセット
 	worldTransform_.translation_ = position;
-	worldTransform_.translation_ = { 5.0f,5.0f,10.0f };
+	worldTransform_.translation_ = { 5.0f,5.0f,20.0f };
 
 	ApproachInit();
 }
@@ -99,6 +99,9 @@ void Enemy::TransferMatrix() {
 	worldTransform_.matWorld_ *= matRot;
 	worldTransform_.matWorld_ *= matTrans;
 
+}
+void Enemy::OnCollision()
+{
 }
 Vector3 Enemy::GetWorldPosition()
 {
@@ -181,7 +184,7 @@ void Enemy::Update() {
 	//キャラクターの移動ベクトル
 	Vector3 approachMove = { 0,0,0 };
 	Vector3 leaveMove = { 0,0,0 };
-	float moveSpeed = 0.1f;
+	float moveSpeed = 0.01f;
 	approachMove = { 0.0f,0.0f,-moveSpeed };
 	leaveMove = { -0.1,0.1,-moveSpeed };
 

@@ -45,7 +45,7 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-
+	void CheckAllCollisions();
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -79,6 +79,11 @@ private: // メンバ変数
 	/// </summary>
 
 	//Matrix4 GetMatrix(const WorldTransform& worldTransforms_);
+
+	///<summary>
+	///衝突判定と応答
+	///</summary>
+	
 public:
 	enum PartId {
 		kRoot,		// 大元

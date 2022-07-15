@@ -80,6 +80,7 @@ void PlayerBullet::TransferMatrix() {
 	worldTransform_.matWorld_ *= matRot;
 	worldTransform_.matWorld_ *= matTrans;
 }
+
 void PlayerBullet::Update() {
 	//座標を移動させる（1フレーム分の移動量を足しこむ）
 	worldTransform_.translation_ += velocity_;
@@ -91,7 +92,22 @@ void PlayerBullet::Update() {
 	TransferMatrix();
 	worldTransform_.TransferMatrix();
 }
+void PlayerBullet::OnCollision()
+{
+	isDead_ = true;
+}
 
+Vector3 PlayerBullet::GetWorldPosition()
+{
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
 
 void PlayerBullet::Draw(const ViewProjection& viewProjection)
 {

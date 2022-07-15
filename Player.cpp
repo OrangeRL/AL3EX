@@ -30,6 +30,8 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 
 	//ƒ[ƒ‹ƒh•ÏŠ·‚Ì‰Šú‰»
 	worldTransform_.Initialize();
+	
+	worldTransform_.translation_ = { 0.0f,0.0f,-20.0f };
 }
 
 Vector3 Player::GetWorldPosition()
@@ -67,7 +69,7 @@ void Player::Move() {
 	else if (input_->PushKey(DIK_S)) {
 		move = { 0,-kCharacterSpeed,0 };
 	}
-	worldTransform_.rotation_.y -= 0.02f;
+	//worldTransform_.rotation_.y -= 0.02f;
 	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
 	worldTransform_.translation_.x = min(worldTransform_.translation_.x, kMoveLimitX);
 	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
@@ -175,6 +177,10 @@ void Player::Attack()
 		//’e‚ð“o˜^‚·‚é
 		bullets_.push_back(std::move(newBullet));
 	}
+}
+
+void Player::OnCollision()
+{
 }
 
 

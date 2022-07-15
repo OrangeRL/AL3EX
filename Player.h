@@ -43,8 +43,14 @@ public:
 
 	void Attack();
 
+	//衝突を検出したら呼び出されるコールバック関数
+	void OnCollision();
+
 	//ワールド座標を取得
 	Vector3 GetWorldPosition();
+
+	//弾リストを取得
+	const std::list<std::unique_ptr<PlayerBullet>>& GetBullets() { return bullets_; }
 private:
 
 	WorldTransform worldTransform_;
@@ -56,7 +62,9 @@ private:
 	Input* input_ = nullptr;
 	// デバックテキスト
 	DebugText* debugText_ = nullptr;
-	
+
 	//弾
 	std::list<std::unique_ptr<PlayerBullet>>bullets_;
+
+	
 };
