@@ -1,5 +1,5 @@
 #include "Player.h"
-
+#include "assert.h"
 
 Vector3 vecmat(Vector3& vec, Matrix4& mat) {
 
@@ -13,9 +13,7 @@ Vector3 vecmat(Vector3& vec, Matrix4& mat) {
 
 	return vecMat;
 }
-Player::Player() {
 
-}
 
 void Player::Initialize(Model* model, uint32_t textureHandle)
 {
@@ -32,6 +30,18 @@ void Player::Initialize(Model* model, uint32_t textureHandle)
 
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
+}
+
+Vector3 Player::GetWorldPosition()
+{
+	// ワールド座標を入れる変数
+	Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
 }
 
 void Player::Move() {

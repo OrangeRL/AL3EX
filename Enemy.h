@@ -1,5 +1,5 @@
 #pragma once
-#include "assert.h"
+#include <cassert>
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "DebugText.h"
@@ -13,9 +13,18 @@
 #include "EnemyBullet.h"
 #include <memory>
 #include<list>
+#include "MathUtility.h"
+
+using namespace MathUtility;
+
+/// <summary>
+///  自機クラスの前方宣言
+/// </summary>
+class Player;
 ///<summary>
 ///敵
 ///</summary>
+
 class Enemy {
 public:
 	/// <summary>
@@ -39,9 +48,15 @@ public:
 	void Fire();
 	//接近フェーズ初期化
 	void ApproachInit();
-	//発射間隔
-	static const int kFireInterval = 60;
 
+	// 発射間隔
+	static int const kFireInterval = 60;
+
+	// セッター
+	void SetPlayer(Player* player) { player_ = player; }
+
+	// ワールド座標を取得
+	Vector3 GetWorldPosition();
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
@@ -51,6 +66,7 @@ private:
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
 	DebugText* debugText_ = nullptr;
+	
 	//行動フェーズ
 	enum class Phase {
 		Approach,//接近する
@@ -64,4 +80,7 @@ private:
 
 	//発射タイマー
 	int32_t fireTimer = 0;
+
+	//自キャラ
+	Player* player_ = nullptr;
 };

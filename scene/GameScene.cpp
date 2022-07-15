@@ -26,6 +26,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
 
+
 	//自キャラの生成
 	player_ = new Player();
 	player_->Initialize(model_, textureHandle_);
@@ -33,7 +34,11 @@ void GameScene::Initialize() {
 	//tekiキャラの生成
 	Vector3 position = worldTransforms_->translation_;
 	enemy_ = new Enemy();
+	//敵キャラに自キャラのアドレスを渡す
+	enemy_->SetPlayer(player_);
+
 	enemy_->Initialize(model_,position, textureHandle_);
+	
 	
 	//Enemy* newEnemy = new Enemy();
 	//std::unique_ptr<Enemy>newEnemy = std::make_unique<Enemy>();

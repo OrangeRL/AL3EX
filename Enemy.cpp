@@ -1,4 +1,5 @@
 #include "Enemy.h"
+#include "Player.h"
 
 Vector3 vecM(Vector3& vec, Matrix4& mat) {
 
@@ -99,28 +100,45 @@ void Enemy::TransferMatrix() {
 	worldTransform_.matWorld_ *= matTrans;
 
 }
-
+Vector3 Enemy::GetWorldPosition()
+{
+	TransferMatrix();
+	//ワールド座標を入れる変数
+	Vector3 worldPos;//ワールド行列の平行移動成分を取得（ワールド座標）
+	// ワールド行列の平行移動成分を取得（ワールド座標）
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+	return worldPos;
+}
 void Enemy::Fire()
 {
-	
-		TransferMatrix();
-		//弾の速度
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, -kBulletSpeed);
 
-		velocity = vecM(velocity, worldTransform_.matWorld_);
-		//弾を生成し、初期化
-		std::unique_ptr<EnemyBullet>newBullet = std::make_unique<EnemyBullet>();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-		//弾を登録する
-		bullets_.push_back(std::move(newBullet));
-	
+	TransferMatrix();
+
+	assert(player_);
+	//弾の速度
+	const float kBulletSpeed = 1.0f;
+	// 自キャラのワールド座標を取得する
+	Vector3 playerPos = player_->GetWorldPosition();
+	// 敵キャラのワールド座標を取得する
+	Vector3 enemyPos = GetWorldPosition();
+	// 差分ベクトル
+	Vector3 velocity = playerPos - enemyPos;
+	// 正規化
+	velocity = MathUtility::Vector3Normalize(velocity);
+	velocity = vecM(velocity, worldTransform_.matWorld_);
+	//弾を生成し、初期化
+	std::unique_ptr<EnemyBullet>newBullet = std::make_unique<EnemyBullet>();
+	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	//弾を登録する
+	bullets_.push_back(std::move(newBullet));
+
 }
 
 void Enemy::ApproachInit()
 {
 	
-	//発射タイマーを初期化
 	
 	// 発射タイマーカウントダウン
 	fireTimer--;
@@ -136,6 +154,7 @@ void Enemy::ApproachInit()
 	debugText_->Printf(
 		"fireTimer:(%f,%f)", fireTimer, kFireInterval);
 }
+
 
 
 void Enemy::Move()
@@ -184,8 +203,8 @@ void Enemy::Update() {
 		break;
 	}
 
-	worldTransform_.rotation_.y -= 0.02f;
-	worldTransform_.rotation_.x -= 0.02f;
+	/*worldTransform_.rotation_.y -= 0.02f;
+	worldTransform_.rotation_.x -= 0.02f;*/
 	TransferMatrix();
 	worldTransform_.TransferMatrix();
 	debugText_->SetPos(50, 80);
@@ -194,7 +213,6 @@ void Enemy::Update() {
 		worldTransform_.translation_.x,
 		worldTransform_.translation_.y,
 		worldTransform_.translation_.z);
-
 
 }
 
