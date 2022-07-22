@@ -4,6 +4,7 @@
 #include<random>
 #include"AxisIndicator.h"
 #include"PrimitiveDrawer.h"
+#include"DebugCamera.h"
 
 GameScene::GameScene() {
 
@@ -13,17 +14,19 @@ GameScene::~GameScene() {
 
 	delete model_;
 	delete debugCamera_;
-	delete player_;
-	delete enemy_;
+	//delete player_;
+	delete modelSkydome_;
 }
 
 void GameScene::Initialize() {
+
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
 	textureHandle_ = TextureManager::Load("mario.jpg");
 	model_ = Model::Create();
+
 
 	//自キャラの生成
 	player_ = new Player();
@@ -37,12 +40,10 @@ void GameScene::Initialize() {
 
 	enemy_->Initialize(model_, position, textureHandle_);
 
-
-	//Enemy* newEnemy = new Enemy();
-	//std::unique_ptr<Enemy>newEnemy = std::make_unique<Enemy>();
-	////自キャラの初期化
-	//newEnemy->Initialize(model_, position, textureHandle_);
-	//enemy_.reset(newEnemy);
+	skydome_ = std::make_unique<skydome>();
+	//3Dモデルの生成
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_->Initialize(modelSkydome_);
 
 	// ビュープロジェクションの初期化
 	viewProjection_.Initialize();
@@ -56,6 +57,8 @@ void GameScene::Initialize() {
 	AxisIndicator::SetTargetViewProjection(&viewProjection_);
 }
 
+
+
 void GameScene::Update() {
 	debugCamera_->Update();
 
@@ -65,30 +68,8 @@ void GameScene::Update() {
 	enemy_->Update();
 
 	CheckAllCollisions();
-	//#ifdef _DEBUG 
-	//	if (input_->TriggerKey(DIK_O))
-	//	{
-	//		//デバッグカメラ有効フラグをトグル 
-	//		isDebugCameraActive_ = true;
-	//	}
-	//
-	//	//カメラの処理
-	//	if (isDebugCameraActive_)
-	//	{
-	//		
-	//		debugCamera_->Update();
-	//		viewProjection_.matView = debugCamera_->SetDistance(float distance) { distance_ = distance;};
-	//		viewProjection_.matProjection = デバッグカメラのプロジェクション行列;
-	//		ビュープロジェクションの転送
-	//	}
-	//	else 
-	//	{
-	//		ビュープロジェクション行列の再計算と転送;
-	//	}
-	//#endif
+
 }
-
-
 
 void GameScene::Draw() {
 
@@ -118,9 +99,11 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 	//3Dモデル描画
+	skydome_->Draw(viewProjection_);
 	//自機の描画
 	player_->Draw(viewProjection_);
 	enemy_->Draw(viewProjection_);
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -141,6 +124,8 @@ void GameScene::Draw() {
 
 #pragma endregion
 }
+
+
 void GameScene::CheckAllCollisions()
 {
 	// 判定対象AとBの座標
