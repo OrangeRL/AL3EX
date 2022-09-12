@@ -12,7 +12,7 @@
 /// オーディオ
 /// </summary>
 class Audio {
-  public:
+public:
 	// サウンドデータの最大数
 	static const int kMaxSoundData = 256;
 
@@ -56,21 +56,21 @@ class Audio {
 	/// オーディオコールバック
 	/// </summary>
 	class XAudio2VoiceCallback : public IXAudio2VoiceCallback {
-	  public:
+	public:
 		// ボイス処理パスの開始時
-		STDMETHOD_(void, OnVoiceProcessingPassStart)(THIS_ UINT32 BytesRequired){};
+		STDMETHOD_(void, OnVoiceProcessingPassStart)(THIS_ UINT32 BytesRequired) {};
 		// ボイス処理パスの終了時
-		STDMETHOD_(void, OnVoiceProcessingPassEnd)(THIS){};
+		STDMETHOD_(void, OnVoiceProcessingPassEnd)(THIS) {};
 		// バッファストリームの再生が終了した時
-		STDMETHOD_(void, OnStreamEnd)(THIS){};
+		STDMETHOD_(void, OnStreamEnd)(THIS) {};
 		// バッファの使用開始時
-		STDMETHOD_(void, OnBufferStart)(THIS_ void* pBufferContext){};
+		STDMETHOD_(void, OnBufferStart)(THIS_ void* pBufferContext) {};
 		// バッファの末尾に達した時
 		STDMETHOD_(void, OnBufferEnd)(THIS_ void* pBufferContext);
 		// 再生がループ位置に達した時
-		STDMETHOD_(void, OnLoopEnd)(THIS_ void* pBufferContext){};
+		STDMETHOD_(void, OnLoopEnd)(THIS_ void* pBufferContext) {};
 		// ボイスの実行エラー時
-		STDMETHOD_(void, OnVoiceError)(THIS_ void* pBufferContext, HRESULT Error){};
+		STDMETHOD_(void, OnVoiceError)(THIS_ void* pBufferContext, HRESULT Error) {};
 	};
 
 	static Audio* GetInstance();
@@ -129,7 +129,7 @@ class Audio {
 	/// 0で無音、1がデフォルト音量。あまり大きくしすぎると音割れする</param>
 	void SetVolume(uint32_t voiceHandle, float volume);
 
-  private:
+private:
 	Audio() = default;
 	~Audio() = default;
 	Audio(const Audio&) = delete;

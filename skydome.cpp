@@ -1,88 +1,54 @@
-#include"skydome.h"
-#include"MathUtility.h"
-using namespace MathUtility;
+ï»¿#include"skydome.h"
+#include"UpdateMatrix.h"
 
 void skydome::Initialize(Model* model) {
-	//NULLƒ|ƒCƒ“ƒ^ƒ`ƒFƒbƒN
+	//NULLãƒã‚¤ãƒ³ã‚¿ãƒã‚§ãƒƒã‚¯
 	assert(model);
 
-	//ˆø”‚Æ‚µ‚ÄŽó‚¯Žæ‚Á‚½ƒf[ƒ^‚ðƒƒ“ƒo•Ï”‚É‹L˜^‚·‚é
+	//å¼•æ•°ã¨ã—ã¦å—ã‘å–ã£ãŸãƒ‡ãƒ¼ã‚¿ã‚’ãƒ¡ãƒ³ãƒå¤‰æ•°ã«è¨˜éŒ²ã™ã‚‹
 	model_ = model;
 
-	worldTransform_.scale_ = { 100,100,100 };
+	/*worldTransform_.scale_ = { 50,50,5000 };
+	worldTransform_.translation_ = { 0,0,500 };
+	worldTransform_.rotation_ = { 0,0,300 };*/
 
-	//ƒ[ƒ‹ƒh•ÏŠ·‚Ì‰Šú‰»
+	worldTransform_.translation_ = { 0,0,500 };
+	worldTransform_.rotation_ = { 0,0,0 };
+	//ãƒ¯ãƒ¼ãƒ«ãƒ‰å¤‰æ›ã®åˆæœŸåŒ–
 	worldTransform_.Initialize();
 
-	TransferMatrix();
-	worldTransform_.TransferMatrix();
+	/*TransferMatrix();
+	worldTransform_.TransferMatrix();*/
 }
-void skydome::TransferMatrix() {
-	Matrix4 matIdentity;
-	matIdentity.m[0][0] = 1.0f;
-	matIdentity.m[1][1] = 1.0f;
-	matIdentity.m[2][2] = 1.0f;
-	matIdentity.m[3][3] = 1.0f;
+void skydome::Move() {
+	//// ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã®ç§»å‹•ãƒ™ã‚¯ãƒˆãƒ«
+	//Vector3 move = { 0,0,0 };
 
-
-	Matrix4 matScale;
-	matScale.m[0][0] = worldTransform_.scale_.x;
-	matScale.m[1][1] = worldTransform_.scale_.y;
-	matScale.m[2][2] = worldTransform_.scale_.z;
-	matScale.m[3][3] = 1.0f;
-
-	Matrix4 matRotZ;
-	matRotZ.m[0][0] = cos(worldTransform_.rotation_.z);
-	matRotZ.m[0][1] = sin(worldTransform_.rotation_.z);
-	matRotZ.m[1][0] = -sin(worldTransform_.rotation_.z);
-	matRotZ.m[1][1] = cos(worldTransform_.rotation_.z);
-	matRotZ.m[2][2] = 1.0f;
-	matRotZ.m[3][3] = 1.0f;
-
-	Matrix4 matRotY;
-
-	//YŽ²‰ñ“]s—ñ‚ÌŠe—v‘f‚ðÝ’è‚·‚é
-	matRotY.m[0][0] = cos(worldTransform_.rotation_.y);
-	matRotY.m[0][2] = -sin(worldTransform_.rotation_.y);
-	matRotY.m[2][0] = sin(worldTransform_.rotation_.y);
-	matRotY.m[2][2] = cos(worldTransform_.rotation_.y);
-	matRotY.m[1][1] = 1.0f;
-	matRotY.m[3][3] = 1.0f;
-
-	Matrix4 matRotX;
-
-	//XŽ²‰ñ“]s—ñ‚ÌŠe—v‘f‚ðÝ’è‚·‚é
-	matRotX.m[1][1] = cos(worldTransform_.rotation_.x);
-	matRotX.m[1][2] = sin(worldTransform_.rotation_.x);
-	matRotX.m[2][1] = -sin(worldTransform_.rotation_.x);
-	matRotX.m[2][2] = cos(worldTransform_.rotation_.x);
-	matRotX.m[0][0] = 1.0f;
-	matRotX.m[3][3] = 1.0f;
-
-	Matrix4 matRot = matIdentity;
-	//ŠeŽ²‚Ì‰ñ“]s—ñ‚ð‡¬
-	matRot *= matRotZ;
-	matRot *= matRotX;
-	matRot *= matRotY;
-
-	Matrix4 matTrans = MathUtility::Matrix4Identity();
-	matTrans.m[3][0] = worldTransform_.translation_.x;
-	matTrans.m[3][1] = worldTransform_.translation_.y;
-	matTrans.m[3][2] = worldTransform_.translation_.z;
-	matTrans.m[3][3] = 1;
-
-	//‚ÌƒXƒP[ƒŠƒ“ƒOE‰ñ“]E•½sˆÚ“®‚ð‡¬‚µ‚½s—ñ‚ðŒvŽZ‚·‚é
-	worldTransform_.matWorld_ = matIdentity;
-	worldTransform_.matWorld_ *= matScale;
-	worldTransform_.matWorld_ *= matRot;
-	worldTransform_.matWorld_ *= matTrans;
-
+	////åº§æ¨™ç§»å‹•
+	//worldTransform_.translation_ += move;
+	//worldTransform_.TransferMatrix();
 }
 void skydome::Update() {
+	worldTransform_.scale_ = { 500,500,5000 };
+	worldTransform_.matWorld_ = Identity();
+	worldTransform_.matWorld_ = Scale(worldTransform_.scale_);
+	worldTransform_.matWorld_ *= Rot(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= Transform(worldTransform_.translation_);
+	Move();
 
+	worldTransform_.TransferMatrix();
 }
+void skydome::Update2() {
+	worldTransform_.scale_ = { 800,800,1900 };
+	worldTransform_.matWorld_ = Identity();
+	worldTransform_.matWorld_ = Scale(worldTransform_.scale_);
+	worldTransform_.matWorld_ *= Rot(worldTransform_.rotation_);
+	worldTransform_.matWorld_ *= Transform(worldTransform_.translation_);
+	Move();
 
+	worldTransform_.TransferMatrix();
+}
 void skydome::Draw(ViewProjection& viewProjection_) {
-	//3Dƒ‚ƒfƒ‹‚Ì•`‰æ
+	//3Dãƒ¢ãƒ‡ãƒ«ã®æç”»
 	model_->Draw(worldTransform_, viewProjection_);
 }

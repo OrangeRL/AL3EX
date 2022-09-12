@@ -13,6 +13,28 @@
 #include "Enemy.h"
 #include <memory>
 #include "skydome.h"
+#include "RailCamera.h"
+#include "Victory.h"
+#include "Title.h"
+#include "Signal.h"
+#include "TitleScreen.h"
+
+#include "PyramidManager.h"
+#include "BuildingManager.h"
+#include "GroundManager.h"
+#include "EnemyManager.h"
+#include "AsteroidManager.h"
+#include "TitleObaManager.h"
+#include "SpeedParticleManager.h"
+#include "PedestrianManager.h"
+#include "CrossManager.h"
+#include "SignalManager.h"
+#include "CamelManager.h"
+#include "WindManager.h"
+#include "SoundDataManager.h"
+
+#include "ModelManager.h"
+#include "Utill.h"
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -52,10 +74,11 @@ private: // メンバ変数
 	Input* input_ = nullptr;
 	Audio* audio_ = nullptr;
 	DebugText* debugText_ = nullptr;
+	DebugText* timeText_ = nullptr;
 	bool isDebugCameraActive_ = false;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0;
-
+	bool pBoostUse = false;
 	//3Dモデル
 	Model* model_ = nullptr;
 
@@ -67,7 +90,17 @@ private: // メンバ変数
 	//自キャラ
 	Player* player_ = nullptr;
 	//std::unique_ptr<Player> player_;
+	EnemyManager* enemyManager;
+	AsteroidManager* asteroidManager;
+	TitleObaManager* toManager;
+	TitleObaManager* to2Manager;
+	TitleObaManager* to3Manager;
+	TitleObaManager* to4Manager;
+	SpeedParticleManager* spManager;
 	Enemy* enemy_ = nullptr;
+
+	Title* title_ = nullptr;
+	Victory* victory_ = nullptr;
 	//teki
 	//std::unique_ptr<Enemy> enemy_;
 	//カメラ上方向の角度
@@ -78,29 +111,41 @@ private: // メンバ変数
 	ViewProjection viewProjection_;
 	// 3dモデル
 	Model* modelSkydome_;
+	Model* modelSkydomee_;
+	Model* modelSkydomeee_;
+	ModelManager* modelManager;
+	GroundManager gManager;
+	BuildingManager bManager;
+	PedestrianManager pedestrianManager;
+	CrossManager crossManager;
+	SignalManager signalManager;
+	PyramidManager pyramidManager;
+	CamelManager camelManager;
+	WindManager windManager;
+	//BGM
+	SoundDataManager SDManager;
+	Signal signal;
+
+	TitleScreen title;
+	ViewProjection titleView;
+
+	// 天球
 	std::unique_ptr<skydome>skydome_;
-	//3Dモデル
-	//std::unique_ptr<Skydome> modelSkydome_;
-	/// </summary>
+	std::unique_ptr<skydome>skydomee_;
+	std::unique_ptr<skydome>skydomeee_;
 
-	//Matrix4 GetMatrix(const WorldTransform& worldTransforms_);
-
+	// レールカメラ
+	std::unique_ptr<RailCamera> railCamera_;
+	Vector3 popPos = { 0,0,0 };
 	///<summary>
 	///衝突判定と応答
 	///</summary>
+	int overTimer = 30;
 
+	//SoundDataHandle titleBGM = 0;
 public:
-	enum PartId {
-		kRoot,		// 大元
-		kSpine,		// 脊髄
-		kChest,		// 胸
-		kHead,		// 頭
-		kArmL,		// 左腕
-		kArmR,		// 右腕
-		kHip,		// 尻
-		kLegL,		// 左足
-		kLegR,		// 右足
-
-		kNumPartId
-	};
+	int scene = -1;
+	bool isStart_ = false;
+	bool isRestart_ = false;
+	bool playerDead = false;
 };

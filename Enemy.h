@@ -33,7 +33,7 @@ public:
 	Enemy();
 
 	///<summary>///初期化///</summary>///<paramname="model">モデル</param>///<paramname="textureHandle">テクスチャハンドル</param>
-	void Initialize(Model* model, const Vector3& position, uint32_t textureHandle);
+	void Initialize(Model* model_, Model* model_2, const Vector3& position, uint32_t textureHandle);
 	///<summary>
 	///更新
 	///</summary>
@@ -60,14 +60,16 @@ public:
 
 	// ワールド座標を取得
 	Vector3 GetWorldPosition();
-
+	void Reset();
 	//弾リストを取得
 	const std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+
+	bool IsDead() const { return isDead_; }
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
 	//モデル
-	Model* model_ = nullptr;
+	
 	Input* input_ = nullptr;
 	//テクスチャハンドル
 	uint32_t textureHandle_ = 0u;
@@ -83,11 +85,14 @@ private:
 
 	//弾
 	std::list<std::unique_ptr<EnemyBullet>>bullets_;
-
+	// モデル
+	Model* model_ = nullptr;
+	Model* model_2 = nullptr;
 	//発射タイマー
 	int32_t fireTimer = 0;
 
 	//自キャラ
 	Player* player_ = nullptr;
-
+	//デスフラグ
+	bool isDead_ = false;
 };

@@ -21,7 +21,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// ゲームウィンドウの作成
 	win = WinApp::GetInstance();
-	win->CreateGameWindow("LE2C_31_ヨシダ_ツバサ_AL3");
+	win->CreateGameWindow("NAULDEE RACING");
 
 	// DirectX初期化処理
 	dxCommon = DirectXCommon::GetInstance();
@@ -71,6 +71,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 入力関連の毎フレーム処理
 		input->Update();
+
 		// ゲームシーンの毎フレーム処理
 		gameScene->Update();
 		// 軸表示の更新

@@ -19,23 +19,24 @@ Enemy::Enemy() {
 
 }
 
-void Enemy::Initialize(Model* model, const Vector3& position, uint32_t textureHandle)
+void Enemy::Initialize(Model* model_, Model* model_2, const Vector3& position, uint32_t textureHandle)
 {
 	//NULLポインタチェック
-	assert(model);
-
+	assert(model_);
+	assert(model_2);
 	//引数として受け取ったデータをメンバ変数に記録する
-	model_ = model;
-	textureHandle_ = TextureManager::Load("monster.jpg");
+	this->model_ = model_;
+	this->model_2 = model_2;
+	textureHandle_ = TextureManager::Load("iwa.png");
 	input_ = Input::GetInstance();
 	debugText_ = DebugText::GetInstance();
-
+	
 	//ワールド変換の初期化
 	worldTransform_.Initialize();
 	//引数で受け取った初期座標をセット
 	worldTransform_.translation_ = position;
-	worldTransform_.translation_ = { 5.0f,5.0f,10.0f };
-
+	worldTransform_.translation_ = { 0.0f,0.0f,2300.0f };
+	worldTransform_.scale_ = { 1.0f,1.0f,1.0f };
 	ApproachInit();
 }
 
@@ -103,6 +104,8 @@ void Enemy::TransferMatrix() {
 
 void Enemy::OnCollision()
 {
+	isDead_ = true;
+	worldTransform_.translation_.y = 1111.0f;
 }
 Vector3 Enemy::GetWorldPosition()
 {
@@ -114,6 +117,13 @@ Vector3 Enemy::GetWorldPosition()
 	worldPos.y = worldTransform_.matWorld_.m[3][1];
 	worldPos.z = worldTransform_.matWorld_.m[3][2];
 	return worldPos;
+}
+
+void Enemy::Reset()
+{
+	isDead_ = false;
+	//worldTransform_.translation_.y = 0.0f;
+	worldTransform_.translation_ = { 0.0f,0.0f,2300.0f };
 }
 
 void Enemy::Fire()
@@ -134,15 +144,14 @@ void Enemy::Fire()
 	velocity = MathUtility::Vector3Normalize(velocity);
 	velocity = vecM(velocity, worldTransform_.matWorld_);
 	//弾を生成し、初期化
-	std::unique_ptr<EnemyBullet>newBullet = std::make_unique<EnemyBullet>();
-	newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-	//弾を登録する
-	bullets_.push_back(std::move(newBullet));
+	//std::unique_ptr<EnemyBullet>newBullet = std::make_unique<EnemyBullet>();
+	//newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+	////弾を登録する
+	//bullets_.push_back(std::move(newBullet));
 
 }
 void Enemy::ApproachInit()
 {
-
 
 	// 発射タイマーカウントダウン
 	fireTimer--;
@@ -154,23 +163,19 @@ void Enemy::ApproachInit()
 		fireTimer = kFireInterval;
 	}
 
-	debugText_->SetPos(50, 100);
-	debugText_->Printf(
-		"fireTimer:(%f,%f)", fireTimer, kFireInterval);
+	//debugText_->SetPos(50, 100);
+	//debugText_->Printf(
+	//	"fireTimer:(%f,%f)", fireTimer, kFireInterval);
 }
-
-
 
 void Enemy::Move()
 {
 	//キャラクターの移動ベクトル
 	Vector3 move = { 0,0,0 };
-
 	float moveSpeed = 0.2f;
 	move = { 0.0f,0.01f,-moveSpeed };
 
 	//座標移動
-
 	worldTransform_.translation_ += move;
 	TransferMatrix();
 	worldTransform_.TransferMatrix();
@@ -178,46 +183,20 @@ void Enemy::Move()
 
 
 void Enemy::Update() {
-	//デスフラグの立った弾を削除
-	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
-		return bullet->IsDead();
-		});
-
-	//キャラクターの移動ベクトル
-	Vector3 approachMove = { 0,0,0 };
-	Vector3 leaveMove = { 0,0,0 };
-	float moveSpeed = 0.01f;
-	approachMove = { 0.0f,0.0f,-moveSpeed };
-	leaveMove = { -0.1,0.1,-moveSpeed };
-
-	//Fire();
+	
 	ApproachInit();
 	//弾更新
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) { bullet->Update(); }
-	switch (phase_) {
-	case Phase::Approach:
-	default://移動（ベクトルを加算）
-		worldTransform_.translation_ += approachMove;
-		//規定の位置に到達したら離脱
-		if (worldTransform_.translation_.z < -10.0f) {
-			phase_ = Phase::Leave;
-		}
-		break;
-	//case Phase::Leave://移動（ベクトルを加算）
-	//	worldTransform_.translation_ += leaveMove;
-	//	break;
-	}
+	
 
-	/*worldTransform_.rotation_.y -= 0.02f;
-	worldTransform_.rotation_.x -= 0.02f;*/
+
 	TransferMatrix();
 	worldTransform_.TransferMatrix();
-	debugText_->SetPos(50, 80);
+	/*debugText_->SetPos(50, 30);
 	debugText_->Printf(
 		"Enemy move:(%f,%f,%f)",
 		worldTransform_.translation_.x,
 		worldTransform_.translation_.y,
-		worldTransform_.translation_.z);
+		worldTransform_.translation_.z);*/
 
 }
 
@@ -229,13 +208,15 @@ void Enemy::Draw(ViewProjection& viewProjection)
 
 #pragma region 3Dオブジェクト描画
 	//モデルの描画
-	model_->Draw(worldTransform_, viewProjection, textureHandle_);
 
+	model_->Draw(worldTransform_, viewProjection);
+	model_2->Draw(worldTransform_, viewProjection);
 	//弾描画
-	for (std::unique_ptr<EnemyBullet>& bullet : bullets_) { bullet->Draw(viewProjection); }
+	//for (std::unique_ptr<EnemyBullet>& bullet : bullets_) { bullet->Draw(viewProjection); }
 #pragma endregion
 
 #pragma region 前景スプライト描画
 
 #pragma endregion
 }
+

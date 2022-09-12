@@ -34,7 +34,6 @@ public:
 	///</summary>
 	///<paramname="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
-	void TransferMatrix();
 
 	//衝突を検出したら呼び出されるコールバック関数
 	void OnCollision();

@@ -25,12 +25,13 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
-
+	void Update2();
+	void Move();
 	/// <summary>
 	/// 描画
 	/// </summary>
 	void Draw(ViewProjection& viewProjection_);
-	void TransferMatrix();
+	
 private:
 	//ワールド変換データ
 	WorldTransform worldTransform_;
