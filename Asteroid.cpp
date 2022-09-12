@@ -10,7 +10,7 @@ Asteroid::Asteroid()
 
 Asteroid::~Asteroid()
 {
-
+	
 }
 
 void Asteroid::Initialize(Model* model_, Model* partModel, TextureHandle tex, Vector3 popPos)
