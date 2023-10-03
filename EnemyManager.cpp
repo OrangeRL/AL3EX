@@ -55,8 +55,8 @@ void EnemyManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, SoundDa
 {
 	maxEnemyCount = enemys.size();
 	popPos = PPos;
-	debugText_->SetPos(50, 220);
-	debugText_->Printf("slaycount:%d", eventSlayCount);
+	//debugText_->SetPos(50, 220);
+	//debugText_->Printf("slaycount:%d", eventSlayCount);
 	//popCount++;
 	//if ((popCount > 10 && maxEnemyCount < MAX_ENEMY) &&
 	//	NotSpawnTerm == false)
@@ -64,11 +64,11 @@ void EnemyManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, SoundDa
 	//	EnemyPop();
 	//	popCount = 0;
 	//}
-	if (eventSlayCount < 4) {
-		EnemyPop();
-	}
-
 	
+		if (eventSlayCount < 4) {
+			//EnemyPop();
+		}
+
 	for (std::unique_ptr<Enemy2>& enemy : enemys)
 	{
 		enemy->Update(PPos, audio, sdmanager);

@@ -70,7 +70,9 @@ public:
 	bool IsGoal() { return isGoal; }
 	void slow() { speedBooster = false; };
 	void fast() { speedBooster = true; };
+	bool IsDead() { return isDead; };
 private:
+	bool isDead = false;
 	Model* bodyModel = nullptr;
 	Model* taiyaModel = nullptr;
 	WorldTransform worldTransform_;
@@ -117,5 +119,6 @@ private:
 	//ÉXÉLÉã
 	Sprite* brakeIcon = nullptr;
 	bool speedBooster = false;
-
+	SoundDataHandle brakeFX = 0;
+	SoundDataHandle fanfareFX = 0;
 };

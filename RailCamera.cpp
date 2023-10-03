@@ -82,7 +82,7 @@ void RailCamera::Update()
 
 	case Phase::Brake://移動（ベクトルを加算）
 		if (speed >= 0.03f) {
-			speed -= 0.03;
+			speed -= 0.02;
 		}
 		if (speed < 0.03f) {
 			speed = 0.03f;

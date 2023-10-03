@@ -55,6 +55,7 @@ public: // メンバ関数
 	/// 初期化
 	/// </summary>
 	void Initialize();
+	void Stage1BGM();
 
 
 	/// <summary>
@@ -66,7 +67,7 @@ public: // メンバ関数
 	/// 描画
 	/// </summary>
 	void Draw();
-
+	void OverTimerReset();
 	void CheckAllCollisions();
 
 private: // メンバ変数
@@ -134,18 +135,41 @@ private: // メンバ変数
 	std::unique_ptr<skydome>skydomee_;
 	std::unique_ptr<skydome>skydomeee_;
 
+	Sprite* spriteTimer = nullptr;
+	Sprite* spriteTimerText = nullptr;
+
 	// レールカメラ
 	std::unique_ptr<RailCamera> railCamera_;
 	Vector3 popPos = { 0,0,0 };
 	///<summary>
 	///衝突判定と応答
 	///</summary>
-	int overTimer = 30;
+	int overTimer = 1500;
+	int overTimer2 = 2000;
+	int overTimer3 = 1500;
+	
+	SoundDataHandle titleBGM = 0;
+	SoundDataHandle desertBGM = 0;
+	SoundDataHandle selectFX = 0;
+	SoundDataHandle carFX = 0;
+	SoundDataHandle hitFX = 0;
 
-	//SoundDataHandle titleBGM = 0;
+	enum class Phase {
+		Title,//接近する
+		Stage1,//離脱する
+		Stage2,//離脱する
+		Stage3,//離脱する
+		Clear,//離脱する
+	};
+	//フェーズ
+	Phase phase_ = Phase::Title;
+	float stageVol = 0.1f;
 public:
 	int scene = -1;
 	bool isStart_ = false;
 	bool isRestart_ = false;
 	bool playerDead = false;
+	bool resetMusic = false;
+	
+	float titleVol = 0.1f;
 };

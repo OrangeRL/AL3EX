@@ -56,8 +56,8 @@ void SpeedParticleManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio,
 {
 	maxEnemyCount = enemys.size();
 	popPos = PPos;
-	debugText_->SetPos(50, 220);
-	debugText_->Printf("slaycount:%d", eventSlayCount);
+	//debugText_->SetPos(50, 220);
+	//debugText_->Printf("slaycount:%d", eventSlayCount);
 	//popCount++;
 	//if ((popCount > 10 && maxEnemyCount < MAX_ENEMY) &&
 	//	NotSpawnTerm == false)

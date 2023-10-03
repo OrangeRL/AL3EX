@@ -41,13 +41,12 @@ void TitleObaManager::EnemyPop()
 	tempPopPos.y += RNG(0, 200);
 	//tempPopPos.y += RNG(0, 0);
 	tempPopPos.z += RNG(0, 0);
-
 	unique_ptr<TitleOba> newEnemy = make_unique<TitleOba>();
+	//rotation += RNG(-0.04, 0.04);
 	newEnemy->Initialize(model_, partModel_, tex, tempPopPos);
 
 	//“G‚ð“o˜^‚·‚é
 	enemys.push_back(std::move(newEnemy));
-
 }
 
 void TitleObaManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, SoundDataManager sdmanager)
@@ -70,7 +69,11 @@ void TitleObaManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, Soun
 
 	for (std::unique_ptr<TitleOba>& enemy : enemys)
 	{
+
 		enemy->Update(PPos, audio, sdmanager);
+		
+		//enemy->worldTransform_.rotation_.y -= 0.02f;
+		enemy->worldTransform_.rotation_.z += 0.01f;
 	/*	if (enemy->worldTransform_.translation_.z < popPos.z - 40.0f) {
 			enemy->OnCollision();
 		}
@@ -80,7 +83,7 @@ void TitleObaManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, Soun
 		if (enemy->worldTransform_.translation_.z < popPos.z - 20.0f) {
 			enemy->OnCollision();
 		}
-		if (enemy->worldTransform_.translation_.y < popPos.y - 20.0f) {
+		if (enemy->worldTransform_.translation_.y < popPos.y - 30.0f) {
 			enemy->OnCollision();
 		}
 		if (enemy->IsDead())

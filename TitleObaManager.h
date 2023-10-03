@@ -35,7 +35,7 @@ private:
 	Vector3 popPos = { 0,0,0 };
 	DebugText* debugText_ = nullptr;
 	//VanishParticleManager vpManager;
-
+	float rotation = 0.0f;
 	//パソコンが壊れたら嫌なので一応エネミー発生数の上限をつけておく
 	int maxEnemyCount = 0;
 	static const int MAX_ENEMY = 0;

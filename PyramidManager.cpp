@@ -25,7 +25,7 @@ void PyramidManager::Initialize(Model* model_, Model* bodyModel, Model* taiyaMod
 	this->bodyModel = bodyModel;
 	this->taiyaModel = taiyaModel;
 	//floor
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		SetBox({ 80 + i * 10.0f,0.0f,10.0f + i * 250.0f },   { 10.5,10.5,10.5 });
 		SetBox({-80 - i * 10.0f,0.0f,10.0f + i * 250.0f }, { 10.5,10.5,10.5 });

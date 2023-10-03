@@ -131,6 +131,10 @@ public: // メンバ関数
 
 	const Vector2& GetPosition() { return position_; }
 
+	void SetRotationer(const Vector2& rotation2);
+
+	const Vector2& GetRotationer() { return rotation2; }
+
 	/// <summary>
 	/// 角度の設定
 	/// </summary>
@@ -208,6 +212,7 @@ private: // メンバ変数
 	float rotation_ = 0.0f;
 	// 座標
 	Vector2 position_{};
+	Vector2 rotation2{};
 	// スプライト幅、高さ
 	Vector2 size_ = { 100.0f, 100.0f };
 	// アンカーポイント

@@ -53,13 +53,32 @@ void TitleOba::Update(Vector3 pPos, Audio* audio, SoundDataManager sdmanager)
 		worldTransform_.scale_.y += 0.1f;
 	}
 	worldTransform_.scale_.z = 0.01f;
-	worldTransform_.translation_.x -= 0.2f;
+	worldTransform_.translation_.x -= 0.05f;
 	/*if (worldTransform_.translation_.y > 1.0f)
 	{*/
-	worldTransform_.translation_.y -= 0.2f;
+	worldTransform_.translation_.y -= 0.05f;
 	//}
 
-	//worldTransform_.rotation_.x -= 0.1f;
+	//worldTransform_.rotation_.y -= 0.05f;
+	
+	//switch (phase_) {
+	//case Phase::Approach:
+	//default://移動（ベクトルを加算）
+	//	worldTransform_.rotation_.y -= 0.03f;
+	//	
+	//	//規定の位置に到達したら離脱
+	//	if (worldTransform_.rotation_.y < -5.0f) {
+	//		phase_ = Phase::Leave;
+	//	}
+	//	break;
+	//case Phase::Leave://移動（ベクトルを加算）
+	//	
+	//	worldTransform_.rotation_.y += 0.03f;
+	//	if (worldTransform_.rotation_.x > 5.0f) {
+	//		phase_ = Phase::Approach;
+	//	}
+	//	break;
+	//}
 	
 	//行列計算
 	worldTransform_.matWorld_ = Scale(worldTransform_.scale_);

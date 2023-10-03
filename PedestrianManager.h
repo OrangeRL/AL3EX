@@ -1,6 +1,7 @@
 #pragma once
 #include "Pedestrian.h"
 #include "object.h"
+#include "audio.h"
 #include <memory>
 #include <list>
 

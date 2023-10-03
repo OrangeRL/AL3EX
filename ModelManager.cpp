@@ -4,7 +4,7 @@ ModelManager::ModelManager()
 {
 	model_ = Model::Create();
 	skydome = Model::CreateFromOBJ("skydome");
-	firewisp = Model::CreateFromOBJ("firewisp");
+	
 	player = Model::CreateFromOBJ("car2");
 	body = Model::CreateFromOBJ("carBlack");
 	carWindow = Model::CreateFromOBJ("carWindow");

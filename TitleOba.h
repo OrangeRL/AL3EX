@@ -35,7 +35,7 @@ private:
 
 	bool hitGround = false;
 	bool hitCeiling = false;
-
+	float rotation = 0.0f;
 	bool isBoxCol = false;
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
@@ -60,5 +60,10 @@ private:
 	void MoveOpp();
 	void MoveCenter();
 	void Attack(Audio* audio, SoundDataManager sdmanager);
-
+	enum class Phase {
+		Approach,//接近する
+		Leave,//離脱する
+	};
+	//フェーズ
+	Phase phase_ = Phase::Approach;
 };

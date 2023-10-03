@@ -34,9 +34,21 @@ void GameScene::Initialize() {
 	//textureHandle_ = TextureManager::Load("player.png");
 	modelManager = new ModelManager();
 	model_ = Model::Create();
+	spriteTimer = Sprite::Create(TextureManager::Load("overTimer.png"),
+		{ 0,0 });
+	spriteTimer->SetSize({ 100 * 1.3f, 100 * 1.3f });
+	spriteTimer->SetPosition({ -15,
+			-35
+		});
 	//SDManager.Initialize();
-	/*titleBGM = audio_->LoadWave("holocure2.wav");
-	audio_->PlayWave(titleBGM, true, 0.1f);*/
+	titleBGM = audio_->LoadWave("Outset.wav");
+	desertBGM = audio_->LoadWave("Stage1.wav");
+	carFX = audio_->LoadWave("carRev.wav");
+	hitFX = audio_->LoadWave("OnHit.wav");
+	audio_->PlayWave(titleBGM, true, 0.1f);
+	
+
+
 	title.Initialize(modelManager->titleCar, modelManager->titleCar, modelManager->titleCar, titleView);
 	titleView.Initialize();
 	titleView.fovAngleY = DegreeConversionRad(90.0f);
@@ -159,10 +171,22 @@ void GameScene::Initialize() {
 	viewProjection_.Initialize();
 
 }
-
+void GameScene::OverTimerReset() {
+	if (scene == 1) {
+	overTimer = 1500;
+	}
+	if (scene == 2) {
+		overTimer = 2100;
+	}
+	if (scene == 3) {
+		overTimer = 1500;
+	}
+}
 void GameScene::Update() {
+
+
 	popPos = { 0,0,0 };
-	if (scene == -1) {
+	if (scene == -1 || scene == 0 || scene == 4) {
 		toManager->Update(popPos, bManager.IsBossBattle(), audio_, SDManager);
 		toManager->EventStart(audio_, SDManager);
 		to2Manager->Update(popPos, bManager.IsBossBattle(), audio_, SDManager);
@@ -171,25 +195,47 @@ void GameScene::Update() {
 		to3Manager->EventStart(audio_, SDManager);
 		to4Manager->Update(popPos, bManager.IsBossBattle(), audio_, SDManager);
 		to4Manager->EventStart(audio_, SDManager);
-	}
-	//debugCamera_->Update();
-	if (scene == 4) {
 		player_->Reset();
 	}
+
+	//debugCamera_->Update();
+	
+	
 	title.Update();
 	//title_->Update();
 	skydome_->Update();
 	skydomee_->Update2();
-	debugText_->SetPos(50, 200);
-	debugText_->Printf("scene:%d", scene);
+	//debugText_->SetPos(50, 200);
+	//debugText_->Printf("scene:%d", scene);
+	if(scene <= 0 || scene == 4){
 	if (input_->TriggerKey(DIK_T))
 	{
-		overTimer = 1800;
-		//isStart_ = true;
-		scene += 1;
-		if (scene > 3) {
+		if (scene == -1) {
+			//audio_->StopWave(titleBGM);
+			selectFX = audio_->LoadWave("selectSound.wav");
+			audio_->PlayWave(selectFX, false, 0.1f);
+		}
+		if (scene == 0) {
+			carFX = audio_->LoadWave("carRev.wav");
+			selectFX = audio_->LoadWave("selectSound.wav");
+			audio_->PlayWave(selectFX, false, 0.1f);
+			audio_->StopWave(titleBGM);
+			//audio_->PlayWave(carFX, true, 0.02f);
+			
+			audio_->PlayWave(desertBGM, true, 0.1f);
+			//audio_->PlayWave(titleBGM, true, 0.1f);
+		}
+	
+		if (scene == 4)
+		{
+			audio_->StopWave(desertBGM);
+			audio_->PlayWave(titleBGM, true, 0.1f);
 			scene = -1;
 		}
+		overTimer = 1500;
+		//isStart_ = true;
+		scene += 1;
+
 		//player_->resetStage();
 		//player_->Reset();
 		for (int i = 0; i < 1; i++) {
@@ -202,7 +248,8 @@ void GameScene::Update() {
 			railCamera_->Restart();
 			gManager.Update();
 			//bullet->OnCollision();
-			//isRestart_ = true;
+			isRestart_ = true;
+			
 			break;
 
 
@@ -213,6 +260,8 @@ void GameScene::Update() {
 			}
 		}
 	}
+	}
+
 	if (scene == 1) {
 		if(playerDead==false)
 		{
@@ -238,6 +287,7 @@ void GameScene::Update() {
 		for (int i = 0; i < 1; i++) {
 			if (input_->TriggerKey(DIK_R))
 			{
+
 				pBoostUse = false;
 				spManager->EnemyDead();
 				player_->resetStage();
@@ -246,13 +296,14 @@ void GameScene::Update() {
 				player_->Reset();
 				enemy_->Reset();
 				railCamera_->Restart();
-				overTimer = 1800;
+				overTimer = 1500;
 				//bullet->OnCollision();
-				isRestart_ = true;
+				//isRestart_ = true;
 				break;
 			}
 
 			if (isRestart_ == true) {
+				
 				isStart_ = false;
 				scene = 1;
 				isRestart_ = false;
@@ -265,8 +316,44 @@ void GameScene::Update() {
 
 		CheckAllCollisions();
 		viewProjection_.TransferMatrix();
+		if (player_->nexxtStage()) 
+		{
+
+			scene += 1;
+			railCamera_->Restart();
+			
+			for (int i = 0; i < 1; i++) {
+				OverTimerReset();
+				player_->resetStage();
+				player_->Reset();
+				enemy_->Reset();
+				railCamera_->Restart();
+				enemyManager->EnemyReset();
+				//bullet->OnCollision();
+				spManager->EnemyDead();
+				pBoostUse = false;
+				resetMusic = true;
+			}
+
+		}
+		for (int i = 0; i < 1; i++) {
+			if (resetMusic == true) {
+
+				
+				resetMusic = false;
+				
+			}
+		}
 	}
 	if (scene == 2) {
+		if (playerDead == false)
+		{
+			overTimer2--;
+		}
+		if (overTimer2 <= 0) {
+			railCamera_->OnCollision();
+			player_->OnCollision();
+		}
 		enemyManager->Update(player_->GetWorldPosition(), bManager.IsBossBattle(), audio_, SDManager);
 		/*enemyManager->EventStart(audio_, SDManager);*/
 		spManager->Update(player_->GetWorldPosition(), bManager.IsBossBattle(), audio_, SDManager);
@@ -287,7 +374,8 @@ void GameScene::Update() {
 		skydomee_->Update2();
 		enemyManager->EventStart(audio_, SDManager);
 		//player_->resetStage();
-
+		
+		victory_->Restart();
 		viewProjection_.matView = railCamera_->GetViewProjection().matView;
 		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
 
@@ -298,8 +386,6 @@ void GameScene::Update() {
 			railCamera_->Restart();
 			for (int i = 0; i < 1; i++) {
 				player_->resetStage();
-				
-				victory_->Restart();
 				player_->Reset();
 				enemy_->Reset();
 				railCamera_->Restart();
@@ -307,6 +393,7 @@ void GameScene::Update() {
 				//bullet->OnCollision();
 				spManager->EnemyDead();
 				pBoostUse = false;
+				overTimer2 = 2000;
 			}
 		}
 		for (int i = 0; i < 1; i++) {
@@ -316,7 +403,7 @@ void GameScene::Update() {
 				//enemyManager->EnemyDead();
 				enemyManager->EnemyReset();
 				player_->resetStage();
-				
+				overTimer2 = 2000;
 				victory_->Restart();
 				player_->Reset();
 				enemy_->Reset();
@@ -336,7 +423,14 @@ void GameScene::Update() {
 		}
 	}
 	if (scene == 3) {
-
+		if (playerDead == false)
+		{
+			overTimer3--;
+		}
+		if (overTimer3 <= 0) {
+			railCamera_->OnCollision();
+			player_->OnCollision();
+		}
 		//自キャラの更新
 		player_->Update();
 		//敵の更新
@@ -370,7 +464,7 @@ void GameScene::Update() {
 			for (int i = 0; i < 1; i++) {
 				//asteroidManager->EnemyReset();
 				player_->resetStage();
-				
+				overTimer3 = 1500;
 				victory_->Restart();
 				player_->Reset();
 				enemy_->Reset();
@@ -378,6 +472,7 @@ void GameScene::Update() {
 				asteroidManager->EnemyDead();
 				spManager->EnemyDead();
 				pBoostUse = false;
+				overTimer3 = 1500;
 				//bullet->OnCollision();
 
 			}
@@ -386,7 +481,7 @@ void GameScene::Update() {
 			if (input_->TriggerKey(DIK_R))
 			{
 				player_->resetStage();
-				
+				overTimer3 = 1500;
 				victory_->Restart();
 				player_->Reset();
 				enemy_->Reset();
@@ -408,7 +503,78 @@ void GameScene::Update() {
 			}
 		}
 	}
+	if (scene == 4) {
+
+		//自キャラの更新
+		player_->Update();
+		player_->OnCollision();
+		//敵の更新
+		enemy_->Update();
+		victory_->Update();
+		railCamera_->Update();
+		railCamera_->OnCollision();
+		gManager.Update3();
+		bManager.Update();
+		//pedestrianManager.Update2();
+		crossManager.Update();
+		//pyramidManager.Update();
+		//camelManager.Update();
+		skydomeee_->Update2();
+		/*enemyManager->Update(player_->GetWorldPosition(), bManager.IsBossBattle(), audio_, SDManager);
+		enemyManager->EventStart(audio_, SDManager);*/
+
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+
+		CheckAllCollisions();
+		viewProjection_.TransferMatrix();
+		if (player_->nexxtStage() == true) {
+			scene += 1;
+			railCamera_->Restart();
+			for (int i = 0; i < 1; i++) {
+				//asteroidManager->EnemyReset();
+				player_->resetStage();
+
+				victory_->Restart();
+				player_->Reset();
+				enemy_->Reset();
+				railCamera_->Restart();
+				asteroidManager->EnemyDead();
+				spManager->EnemyDead();
+				pBoostUse = false;
+				//bullet->OnCollision();
+
+			}
+		}
+		for (int i = 0; i < 1; i++) {
+			if (input_->TriggerKey(DIK_R))
+			{
+				player_->resetStage();
+
+				victory_->Restart();
+				player_->Reset();
+				enemy_->Reset();
+				railCamera_->Restart();
+				//asteroidManager->EnemyReset();
+				asteroidManager->EnemyDead();
+				spManager->EnemyDead();
+				//bullet->OnCollision();
+				isRestart_ = true;
+				pBoostUse = false;
+				break;
+			}
+
+			if (isRestart_ == true) {
+				isStart_ = false;
+				scene = 4;
+				isRestart_ = false;
+				break;
+			}
+		}
+	}
+
 	if (player_->nexxtStage() == true) {
+
 		scene += 1;
 		railCamera_->Restart();
 		for (int i = 0; i < 1; i++) {
@@ -426,7 +592,6 @@ void GameScene::Update() {
 	}
 }
 
-
 void GameScene::Draw() {
 
 	// コマンドリストの取得
@@ -442,7 +607,9 @@ void GameScene::Draw() {
 	if (scene == -1) {
 		title.BackDraw();
 	}
-
+	if (scene == 0 || scene == 4) {
+		title.BackDraw();
+	}
 
 	// スプライト描画後処理
 
@@ -459,14 +626,15 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-
-
+	
 	/// </summary>
 	//3Dモデル描画
+	
 	if (/*isStart_ == true*/scene == 1) {
 		skydome_->Draw(viewProjection_);
 		victory_->Draw(viewProjection_);
-	
+		spriteTimer->SetSize({ 0.0f + overTimer, 100.0f * 1.3f });
+		
 		//自機の描画
 		crossManager.Draw(viewProjection_);
 		signalManager.Draw(viewProjection_);
@@ -476,14 +644,19 @@ void GameScene::Draw() {
 		player_->SpriteDraw();
 
 		bManager.Draw(viewProjection_);
+		if(playerDead==false){
 		pedestrianManager.Draw(viewProjection_);
+		}
 		if(player_->IsSpeed())
 		{
+		audio_->PlayWave(carFX, false, 0.03f);
+		//audio_->PlayWave(selectFX, false, 0.008f);
 		spManager->Draw(viewProjection_);
 		}
 	}
 
 	if (/*isStart_ == true*/scene == 2) {
+		spriteTimer->SetSize({ 0.0f + overTimer2, 100.0f * 1.3f });
 		skydomee_->Draw(viewProjection_);
 		pyramidManager.Draw(viewProjection_);
 		camelManager.Draw(viewProjection_);
@@ -500,6 +673,8 @@ void GameScene::Draw() {
 		//自機の描画
 		if (player_->IsSpeed())
 		{
+			audio_->PlayWave(carFX, false, 0.03f);
+			//audio_->PlayWave(selectFX, false, 0.1f);
 			spManager->Draw(viewProjection_);
 		}
 	}
@@ -517,6 +692,8 @@ void GameScene::Draw() {
 		asteroidManager->Draw(viewProjection_);
 		if (player_->IsSpeed())
 		{
+			audio_->PlayWave(carFX, false, 0.03f);
+			//audio_->PlayWave(selectFX, false, 0.1f);
 			spManager->Draw(viewProjection_);
 		}
 	}
@@ -526,11 +703,30 @@ void GameScene::Draw() {
 	to2Manager->Draw(viewProjection_);
 	to3Manager->Draw(viewProjection_);
 	
-
 	//spManager->Draw(viewProjection_);
 	//player_->Draw(viewProjection_);
 	title.ModelDraw(titleView);
 	}
+	if (scene == 0 || scene == 4)
+	{
+		toManager->Draw(viewProjection_);
+		to2Manager->Draw(viewProjection_);
+		to3Manager->Draw(viewProjection_);
+
+		//spManager->Draw(viewProjection_);
+		//player_->Draw(viewProjection_);
+		title.ModelDraw(titleView);
+	}
+	if (scene == 4)
+	{
+		toManager->Draw(viewProjection_);
+		to2Manager->Draw(viewProjection_);
+		to3Manager->Draw(viewProjection_);
+		//title.WinDraw();
+		//player_->Draw(viewProjection_);
+
+	}
+
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -543,11 +739,19 @@ void GameScene::Draw() {
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
 	 
-	if (scene == -1) {
+	if (scene == -1 /*|| scene == 4*/) {
 		title.TitleFrontDraw();
 		player_->Reset();
 	}
-	
+	if (scene == 0) {
+		title.FrontSetsumeiDraw();
+	}
+
+	if (scene == 4)
+	{
+		title.WinDraw();
+		
+	}
 	if (/*isStart_ == true*/scene == 1) {
 		title.FrontDraw();
 		if (pBoostUse == false) {
@@ -567,6 +771,7 @@ void GameScene::Draw() {
 		}
 	}
 	if (/*isStart_ == true*/scene == 3) {
+		spriteTimer->SetSize({ 0.0f + overTimer3, 100.0f * 1.3f });
 		title.FrontDraw();
 		if (pBoostUse == false) {
 			title.BoostX1Draw();
@@ -575,16 +780,33 @@ void GameScene::Draw() {
 			title.BoostX0Draw();
 		}
 	}
-	if (overTimer < 0) {
+	if (overTimer < 0 && player_->IsDead() && scene == 1) {
 		title.TimeUpDraw();
 	}
 
-	//if (overTimer < 0) {
-	//	title.TimeUpDraw();
-	//}
+	if (overTimer > 0 && scene == 1) {
+	spriteTimer->Draw();
+	title.SpriteTimerText();
+	}
 
-	if (playerDead == true) {
+	if (overTimer2 < 0 && player_->IsDead() && scene == 2) {
 		title.TimeUpDraw();
+	}
+
+	if (overTimer2 > 0 && scene == 2) {
+		spriteTimer->Draw();
+		title.SpriteTimerText();
+	}
+	if (overTimer3 < 0 && player_->IsDead() && scene == 3) {
+		title.TimeUpDraw();
+	}
+
+	if (overTimer3 > 0 && scene == 3) {
+		spriteTimer->Draw();
+		title.SpriteTimerText();
+	}
+	if (playerDead == true && player_->IsDead()) {
+		title.GameOverDraw();
 	}
 	if (player_->IsGoal())
 	{
@@ -599,7 +821,11 @@ void GameScene::Draw() {
 		pBoostUse = false;
 		playerDead = false;
 	}
-	
+	debugText_->SetPos(50, 310);
+	debugText_->SetScale(0);
+	debugText_->Printf("TIME UP:(%d)", overTimer);
+	debugText_->SetPos(50, 330);
+	debugText_->Printf("TIME UP:(%d)", overTimer2);
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
 	//
@@ -629,8 +855,7 @@ void GameScene::CheckAllCollisions()
 	if (scene == 1) {
 		// 自キャラの座標
 		posA = player_->GetWorldPosition();
-		debugText_->SetPos(50, 310);
-		debugText_->Printf("TIME UP:(%d)", overTimer);
+	
 		// 自キャラとOBAの当たり判定
 		/*for (const std::unique_ptr<EnemyBullet>& bullet : enemyBullets) {*/
 		for (const std::unique_ptr<Pedestrian>& pedestrian : pedestrianManager.GetObjects())
@@ -652,7 +877,7 @@ void GameScene::CheckAllCollisions()
 				//player_->OnCollision();
 				// 敵弾の衝突時コールバックを呼び出す
 				pedestrian->OnCollision();
-			
+				audio_->PlayWave(hitFX, false, 0.3f);
 				//enemy_->OnCollision();
 				victory_->OnCollision();
 				railCamera_->OnCollision();
@@ -686,7 +911,7 @@ void GameScene::CheckAllCollisions()
 			if (input_->TriggerKey(DIK_T))
 			{
 				pedestrian->Reset();
-				playerDead = false;
+				/*playerDead = false;*/
 			}
 		}
 	}
@@ -714,22 +939,22 @@ void GameScene::CheckAllCollisions()
 			float radius = (posAR + posBR) * (posAR + posBR);
 
 			// 球と球の交差判定
-			if ((dx * dx) + (dy * dy) + (dz * dz - 10) <= radius + 8) {
+			if ((dx * dx) + (dy * dy) + (dz * dz - 8) <= radius + 8) {
 				// 自キャラの衝突時コールバックを呼び出す
 				//player_->OnCollision();
 				// 敵弾の衝突時コールバックを呼び出す
 				camel->OnCollision();
-				
+				audio_->PlayWave(hitFX, false, 0.3f);
 				//enemy_->OnCollision();
 				victory_->OnCollision();
 				railCamera_->OnCollision();
 				player_->OnCollision();
 				playerDead = true;
 			}
-			debugText_->SetPos(50, 10);
+			/*debugText_->SetPos(50, 10);
 			debugText_->Printf("posB:(%f,%f,%f)", posB.x, dy * dy, posB.z);
 			debugText_->SetPos(100, 10);
-			debugText_->Printf("radius:(%f)", radius);
+			debugText_->Printf("radius:(%f)", radius);*/
 
 			if (player_->nexxtStage() == true) {
 				scene += 1;
@@ -810,7 +1035,7 @@ void GameScene::CheckAllCollisions()
 			}
 			if (input_->TriggerKey(DIK_T))
 			{
-				wind->Reset();
+				//wind->Reset();
 			}
 		}
 
@@ -843,17 +1068,17 @@ void GameScene::CheckAllCollisions()
 				//player_->OnCollision();
 				// 敵弾の衝突時コールバックを呼び出す
 				camel->OnCollision();
-				
+				audio_->PlayWave(hitFX, false, 0.3f);
 				//enemy_->OnCollision();
 				victory_->OnCollision();
 				railCamera_->OnCollision();
 				player_->OnCollision();
 				playerDead = true;
 			}
-			debugText_->SetPos(50, 240);
+		/*	debugText_->SetPos(50, 240);
 			debugText_->Printf("posB:(%f,%f,%f)", posB.x, dx * dx, posB.z);
 			debugText_->SetPos(100, 240);
-			debugText_->Printf("radius:(%f)", radius);
+			debugText_->Printf("radius:(%f)", radius);*/
 
 			if (player_->nexxtStage() == true) {
 				scene += 1;

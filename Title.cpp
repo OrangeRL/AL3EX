@@ -20,7 +20,7 @@ void Title::Initialize(Model* model, uint32_t textureHandle)
 	worldTransform_.Initialize();
 	//引数で受け取った初期座標をセット
 
-	worldTransform_.translation_ = { 0.0f,0.0f,-47.0f };
+	worldTransform_.translation_ = { 0.0f,0.0f,0.0f };
 	worldTransform_.TransferMatrix();
 
 }

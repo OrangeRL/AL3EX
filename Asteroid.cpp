@@ -36,7 +36,7 @@ void Asteroid::Update(Vector3 pPos, Audio* audio, SoundDataManager sdmanager)
 		worldTransform_.scale_.y += 0.1f;
 		worldTransform_.scale_.z += 0.1f;
 	}
-	worldTransform_.translation_.x -= 0.4f;
+	worldTransform_.translation_.z -= 0.6f;
 	/*if (worldTransform_.translation_.y > 1.0f)
 	{*/
 	worldTransform_.translation_.y -= 0.4f;

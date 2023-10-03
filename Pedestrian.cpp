@@ -40,8 +40,8 @@ void Pedestrian::Update()
 		leaveMove = { -0.8,0.0,0.0 };
 		LoadTexture(TextureManager::Load("legendoba.png"));
 	}
-	debugText_->SetPos(50, 100);
-	debugText_->Printf("randfloat:(%f)", pos);
+	//debugText_->SetPos(50, 100);
+	//debugText_->Printf("randfloat:(%f)", pos);
 	switch (phase_) {
 	case Phase::Approach:
 	default://移動（ベクトルを加算）

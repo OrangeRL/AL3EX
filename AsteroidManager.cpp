@@ -38,10 +38,10 @@ void AsteroidManager::EnemyPop()
 {
 
 	Vector3 tempPopPos = popPos;
-	tempPopPos.x += RNG(-200, 200);
-	tempPopPos.y += RNG(-100, 200);
+	tempPopPos.x += RNG(-100, 100);
+	tempPopPos.y += RNG(24, 200);
 	//tempPopPos.y += RNG(0, 0);
-	tempPopPos.z += RNG(-10, 1000);
+	tempPopPos.z += RNG(10, 500);
 
 	unique_ptr<Asteroid> newEnemy = make_unique<Asteroid>();
 	newEnemy->Initialize(model_, partModel_, tex, tempPopPos);
@@ -55,8 +55,8 @@ void AsteroidManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, Soun
 {
 	maxEnemyCount = enemys.size();
 	popPos = PPos;
-	debugText_->SetPos(50, 220);
-	debugText_->Printf("slaycount:%d", eventSlayCount);
+	/*debugText_->SetPos(50, 220);
+	debugText_->Printf("slaycount:%d", eventSlayCount);*/
 	//popCount++;
 	//if ((popCount > 10 && maxEnemyCount < MAX_ENEMY) &&
 	//	NotSpawnTerm == false)
@@ -64,7 +64,7 @@ void AsteroidManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, Soun
 	//	EnemyPop();
 	//	popCount = 0;
 	//}
-	if (eventSlayCount < 30) {
+	if (eventSlayCount < 50) {
 		EnemyPop();
 	}
 
@@ -72,7 +72,7 @@ void AsteroidManager::Update(Vector3 PPos, bool NotSpawnTerm, Audio* audio, Soun
 	for (std::unique_ptr<Asteroid>& enemy : enemys)
 	{
 		enemy->Update(PPos, audio, sdmanager);
-		if (enemy->worldTransform_.translation_.z < popPos.z - 40.0f) {
+		if (enemy->worldTransform_.translation_.z < popPos.z - 40.0f || enemy->worldTransform_.translation_.z > 2200) {
 			enemy->OnCollision();
 		}
 		if (enemy->worldTransform_.translation_.y < popPos.y - 40.0f) {
@@ -134,7 +134,7 @@ void AsteroidManager::EventStart(Audio* audio, SoundDataManager sdmanager, int P
 	{
 		//EnemyPop();
 		//audio->PlayWave(sdmanager.enemyPopSE, false, 0.1f);
-		if (eventSlayCount < 30) {
+		if (eventSlayCount < 50) {
 			eventSlayCount++;
 		}
 	}

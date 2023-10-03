@@ -24,9 +24,10 @@ void Player::Initialize(Model* model_, Model* bodyModel, Model* taiyaModel, Worl
 	assert(model_);
 	assert(bodyModel);
 	assert(taiyaModel);
-
+	audio_ = Audio::GetInstance();
 	worldTransform_.Initialize();
-
+	brakeFX = audio_->LoadWave("brakeFX.wav");
+	fanfareFX = audio_->LoadWave("StageClear.wav");
 	this->model_ = model_;
 	this->bodyModel = bodyModel;
 	this->taiyaModel = taiyaModel;
@@ -60,12 +61,14 @@ void Player::nextStage()
 {
 	slow();
 	NexxtStage = true;
+	audio_->PlayWave(fanfareFX, false, 0.5f);
 	//Reset();
 	//resetStage();
 }
 void Player::resetStage()
 {
 	NexxtStage = false;
+	slow();
 }
 Vector3 Player::GetWorldPosition()
 {
@@ -81,6 +84,7 @@ Vector3 Player::GetWorldPosition()
 
 void Player::Reset()
 {
+	isDead = false;
 	slow();
 	boostUseReset();
 	speedBoost = 0.0f;
@@ -94,7 +98,7 @@ void Player::Reset()
 
 void Player::Move() {
 	// キャラクターの移動ベクトル
-	Vector3 move = { 0,0,0 };      
+	Vector3 move = { 0,0,0 };
 	if (worldTransform_.translation_.z >= 2600)
 	{
 		nextStage();
@@ -137,14 +141,14 @@ void Player::Move() {
 		else {
 			speedBoost = 0.0f;
 		}
-		debugText_->SetPos(50, 90);
+	/*	debugText_->SetPos(50, 90);
 		debugText_->Printf("timer:(%f)", speed);
 
 		debugText_->SetPos(50, 260);
 		debugText_->Printf("speedBoostTimer:(%f)", speedBoostTimer);
 
 		debugText_->SetPos(50, 280);
-		debugText_->Printf("speedBoost:(%f)", speedBoost);
+		debugText_->Printf("speedBoost:(%f)", speedBoost);*/
 			Vector3 approachMove = { 0,0,0 };
 			Vector3 leaveMove = { 0,0,0 };
 			approachMove = { 0.0f,0.0f,0.0 };
@@ -152,10 +156,10 @@ void Player::Move() {
 			if (speed > 2.00f) {
 				speed = 2.0f;
 			}
-			if (speed + speedBoost > 1.9f) {
+			if (speed + speedBoost > 2.5f) {
 				fast();
 			}
-			if (speed + speedBoost < 2.0f) {
+			if (speed + speedBoost < 2.1f) {
 				slow();
 			}
 			if (worldTransform_.translation_.z >= 2500)
@@ -167,6 +171,7 @@ void Player::Move() {
 			default://移動（ベクトルを加算）
 				if (input_->PushKey(DIK_SPACE) == 1) {
 					phase_ = Phase::Brake;
+					audio_->PlayWave(brakeFX, false, 0.3);
 				}
 				
 				if (speed < 2.0) 
@@ -217,7 +222,7 @@ void Player::Move() {
 
 			case Phase::Brake://移動（ベクトルを加算）
 				if (speed >= 0.03f) {
-					speed -= 0.03;
+					speed -= 0.02;
 				}
 				if (speed < 0.03f) {
 					speed = 0.03f;
@@ -232,6 +237,7 @@ void Player::Move() {
 
 				if (input_->PushKey(DIK_SPACE) == 0) {
 					phase_ = Phase::Drive;
+					
 				}
 				break;
 			}
@@ -245,8 +251,8 @@ void Player::Move() {
 	//int timer = 10;
 	//timer -= 1;
 	//
-	debugText_->SetPos(50, 70);
-	debugText_->Printf("playermove.z:(%f)", move.z);
+	/*debugText_->SetPos(50, 70);
+	debugText_->Printf("playermove.z:(%f)", move.z);*/
 	
 	//座標移動
 	
@@ -273,19 +279,19 @@ void Player::Update() {
 	//弾更新
 	for (std::unique_ptr<PlayerBullet>& bullet : bullets_) { bullet->Update(); }
 
-	debugText_->SetPos(50, 50);
-	debugText_->Printf(
-		"move:(%f,%f,%f)",
-		worldTransform_.translation_.x,
-		worldTransform_.translation_.y,
-		worldTransform_.translation_.z);
-	debugText_->SetPos(50, 150);
-	debugText_->Printf(
-		"rot:(%f,%f,%f)", worldTransform_.rotation_.x,worldTransform_.rotation_.y, worldTransform_.rotation_.z);
+	//debugText_->SetPos(50, 50);
+	//debugText_->Printf(
+	//	"move:(%f,%f,%f)",
+	//	worldTransform_.translation_.x,
+	//	worldTransform_.translation_.y,
+	//	worldTransform_.translation_.z);
+	//debugText_->SetPos(50, 150);
+	//debugText_->Printf(
+	//	"rot:(%f,%f,%f)", worldTransform_.rotation_.x,worldTransform_.rotation_.y, worldTransform_.rotation_.z);
 
-	debugText_->SetPos(50, 170);
-	debugText_->Printf(
-		"rotspeed:(%f)", turnSpeed);
+	//debugText_->SetPos(50, 170);
+	//debugText_->Printf(
+	//	"rotspeed:(%f)", turnSpeed);
 
 	
 }
@@ -304,9 +310,10 @@ void Player::OnCollision()
 	
 	if (worldTransform_.translation_.z <= 2300)
 	{
+		isDead = true;
 		isWin_ = true;
 		worldTransform_.translation_.y = 550.05f;
-	
+		slow();
 	}
 }
 
